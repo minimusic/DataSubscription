@@ -12,10 +12,19 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let container = DataContainer()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        // create our main window
+        self.window = UIWindow.init(frame: UIScreen.main.bounds)
+        self.window?.backgroundColor = UIColor.white
+
+        // set the main table VC as our root controller
+        let navController = UINavigationController(rootViewController: ViewController(container: container))
+        self.window?.rootViewController = navController
+
+        self.window?.makeKeyAndVisible()
+
         return true
     }
 
