@@ -1,14 +1,14 @@
 //
-//  PublisherViewController.swift
+//  GenericPubViewController.swift
 //  Subscription
 //
-//  Created by Chad on 3/29/19.
+//  Created by Chad on 5/2/19.
 //  Copyright © 2019 raizlabs. All rights reserved.
 //
 
 import UIKit
 
-class PublisherViewController: UIViewController {
+class GenericPubViewController: UIViewController {
     /// View state can match data state, but doesn't need to
     public enum ViewState {
         case error(Error)
@@ -42,13 +42,13 @@ class PublisherViewController: UIViewController {
         return tableView
     }()
     private let container: DataContainer
-    
+
     // MARK: - Init
 
     init(container: DataContainer) {
         self.container = container
         super.init(nibName: nil, bundle: nil)
-        container.manager.subscribe(self)
+        container.genManager.subscribe(self)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -84,7 +84,7 @@ class PublisherViewController: UIViewController {
 
 // MARK: - UITableViewDelegate
 
-extension PublisherViewController: UITableViewDelegate {
+extension GenericPubViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
     }
@@ -92,7 +92,7 @@ extension PublisherViewController: UITableViewDelegate {
 
 // MARK: - UITableViewDelegate
 
-extension PublisherViewController: UITableViewDataSource {
+extension GenericPubViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch state {
         case .error(_):
@@ -127,7 +127,7 @@ extension PublisherViewController: UITableViewDataSource {
 
 // MARK: - ErrorViewDelegate
 
-extension PublisherViewController: ErrorViewDelegate {
+extension GenericPubViewController: ErrorViewDelegate {
     func errorViewWantsRefresh(_ errorView: ErrorView) {
         container.manager.getData()
     }
@@ -137,24 +137,20 @@ extension PublisherViewController: ErrorViewDelegate {
 
 /// Recieve data state publication and convert to local view state
 /// setting the view state should refresh UI appropriately
-extension PublisherViewController: SubscriberProtocol {
-    public func publication(from publisher: AnyPublisher) {
-        if let publisher = publisher as? Publisher<[DataModel]> {
-            switch publisher.state {
-            case .loaded(let newData):
-                state = .loaded(newData)
-            case .error(let theError):
-                state = .error(theError)
-            case .loading:
-                // .loading(let oldData) includes any previously loaded data, when available
-                // but is un-used here
-                state = .loading
-            case .unknown:
-                //
-                break
-            }
-        } else {
-            print("Recieved un-handled publication.")
+extension GenericPubViewController: GenericSubscriberProtocol {
+    // Generic publication uses an associated type on protocol to match the published type
+    public func publication(from publisher: GenericPublisher<[DataModel]>) {
+        switch publisher.state {
+        case .loaded(let newData):
+            state = .loaded(newData)
+        case .error(let theError):
+            state = .error(theError)
+        case .loading:
+            // .loading(let oldData) includes any previously loaded data, when available
+            // but is un-used here
+            state = .loading
+        case .unknown:
+            break
         }
     }
 }

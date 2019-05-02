@@ -38,7 +38,7 @@ class DataEndpoint {
                     }
                     let randomAdj = DataModifiers.allCases[Int.random(in: 0...(DataModifiers.allCases.count - 1))]
                     let randomMarsupial = DataTitles.allCases[Int.random(in: 0...(DataTitles.allCases.count - 1))]
-                    newResult.title = randomAdj.rawValue + " " + randomMarsupial.rawValue
+                    newResult.title = randomAdj.rawValue.capitalized + " " + randomMarsupial.rawValue
                     resultArray.append(newResult)
                 }
                 completion(.success(resultArray))
@@ -79,16 +79,27 @@ public enum DataColors: Int, CaseIterable {
     }
 }
 
+/// marsupials
 public enum DataTitles: String, CaseIterable {
     case kangaroos
-    case kallabies
+    case wallabies
     case koalas
     case wombats
-    case tasmanianDevils = "tasmanian devils"
-    case possums
+    case tasmanianDevils = "Tasmanian devils"
+    case opossums
     case gliders
+    case bandicoots
+    case quolls
+    case potoroos
+    case bettongs
+    case yapoks
+    case cuscuses
+    case dunnarts
+    case numbats
+    case bilbies
 }
 
+/// positive adjectives
 public enum DataModifiers: String, CaseIterable {
     case aggressive
     case agreeable

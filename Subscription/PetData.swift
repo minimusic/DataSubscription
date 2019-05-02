@@ -10,7 +10,7 @@ public protocol PetSubscriber: AnyObject {
     func publisher(_ publisher: PetData, sentMessage: PublishMessageType)
 }
 
-public class PetData: DataPublisher<Pet, PetSubscriber> {
+public class PetData: ExplicitPublisher<Pet, PetSubscriber> {
 
     // This should only be called by request completion
     public func removeInstance(_ itemID: Int) {

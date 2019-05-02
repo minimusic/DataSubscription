@@ -64,12 +64,14 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            let pubController = PublisherViewController(container: container)
-            navigationController?.pushViewController(pubController, animated: true)
+            let pubVC = PublisherViewController(container: container)
+            navigationController?.pushViewController(pubVC, animated: true)
         case 1:
-            break
+            let expPubVC = ExplicitPubViewController(container: container)
+            navigationController?.pushViewController(expPubVC, animated: true)
         case 2:
-            break
+            let genPubVC = GenericPubViewController(container: container)
+            navigationController?.pushViewController(genPubVC, animated: true)
         default:
             break
         }
@@ -89,7 +91,7 @@ extension ViewController: UITableViewDataSource {
         case 0:
             cell.textLabel?.text = "Publisher"
         case 1:
-            cell.textLabel?.text = "Explicite Publisher"
+            cell.textLabel?.text = "Explicit Publisher"
         case 2:
             cell.textLabel?.text = "Generic Publisher"
         default:

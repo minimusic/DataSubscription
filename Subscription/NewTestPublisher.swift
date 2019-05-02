@@ -10,8 +10,8 @@ import Foundation
 
 
 
-public class NewTestPublisher: Publisher<[TestObject]> {
-
-    // Handle any custom endpoint response behavior
-    // or custom model actions (e.g. clear after publish)
-}
+//public class NewTestPublisher: Publisher<[TestObject]> {
+//
+//    // Handle any custom endpoint response behavior
+//    // or custom model actions (e.g. clear after publish)
+//}

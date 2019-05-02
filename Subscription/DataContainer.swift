@@ -10,19 +10,23 @@ import Foundation
 
 public class DataContainer {
     public let manager: Manager
+    public let genManager: GenManager
 
     public init() {
         // All Services
 
         // All Managers/Publishers
         manager = Manager()
+        genManager = GenManager()
 
         // Start up managers
         manager.start(with: self)
+        genManager.start(with: self)
     }
 
     public func logout() {
         manager.logout()
+        genManager.logout()
     }
 }
 
@@ -54,5 +58,36 @@ public extension ManagerProtocol {
     /// Wrap AnySubscriber type erasure
     func unsubscribe<T: SubscriberProtocol>(_ subscriber: T) {
         publisher.unsubscribe(AnySubscriber(subscriber))
+    }
+}
+
+public protocol GenManagerProtocol {
+    associatedtype PublishedType
+    var publisher: GenericPublisher<PublishedType> { get }
+    /// Give managers a chance to subscribe to other services
+    func start(with container: DataContainer)
+    /// subscriber is ready to consume: clear errors or stale data if possible
+    func refreshIfNeeded()
+    /// Clean up any cached data or state
+    func logout()
+
+    func subscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType
+    func unsubscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType
+}
+
+public extension GenManagerProtocol {
+    /// Give managers a chance to subscribe to other services
+    func start(with container: DataContainer) {}
+    /// Clean up any cached data or state
+    func logout() {
+        publisher.reset()
+    }
+    /// Wrap AnySubscriber type erasure
+    func subscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType {
+        publisher.subscribe(AnyGenSubscriber(subscriber))
+    }
+    /// Wrap AnySubscriber type erasure
+    func unsubscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType {
+        publisher.unsubscribe(AnyGenSubscriber(subscriber))
     }
 }
