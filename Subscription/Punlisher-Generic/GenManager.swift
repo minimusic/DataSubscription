@@ -9,12 +9,7 @@
 import Foundation
 
 public final class GenManager: NSObject {
-    // FIXME: replace with generic publisher
     public let publisher = GenericPublisher<[DataModel]>()
-
-    //    public init() {
-    //        publisher = NewPublisher<[DataModel]>()
-    //    }
 
     public func getData() {
         publisher.startLoading()

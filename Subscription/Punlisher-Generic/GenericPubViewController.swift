@@ -58,7 +58,7 @@ class GenericPubViewController: UIViewController {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Publisher"
+        self.title = "Generic Publisher"
 
         // Table
         view.addSubview(tableView)
@@ -78,7 +78,7 @@ class GenericPubViewController: UIViewController {
     }
 
     @objc func refreshData() {
-        container.manager.getData()
+        container.genManager.getData()
     }
 }
 
@@ -129,7 +129,7 @@ extension GenericPubViewController: UITableViewDataSource {
 
 extension GenericPubViewController: ErrorViewDelegate {
     func errorViewWantsRefresh(_ errorView: ErrorView) {
-        container.manager.getData()
+        container.genManager.getData()
     }
 }
 

@@ -11,6 +11,7 @@ import Foundation
 public class DataContainer {
     public let manager: Manager
     public let genManager: GenManager
+    public let expManager: ExplicitManager
 
     public init() {
         // All Services
@@ -18,15 +19,18 @@ public class DataContainer {
         // All Managers/Publishers
         manager = Manager()
         genManager = GenManager()
+        expManager = ExplicitManager()
 
         // Start up managers
         manager.start(with: self)
         genManager.start(with: self)
+        expManager.start(with: self)
     }
 
     public func logout() {
         manager.logout()
         genManager.logout()
+        expManager.logout()
     }
 }
 
@@ -90,4 +94,33 @@ public extension GenManagerProtocol {
     func unsubscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType {
         publisher.unsubscribe(AnyGenSubscriber(subscriber))
     }
+}
+
+public protocol ExpManagerProtocol {
+//    associatedtype PublishedType
+//    associatedtype SubscriptionProtocol
+//    var publisher: ExplicitPublisher<PublishedType, SubscriptionProtocol> { get }
+//    var publisher: ExplicitPublisher<PublishedType, SubscriptionProtocol> { get }
+    /// Give managers a chance to subscribe to other services
+    func start(with container: DataContainer)
+    /// subscriber is ready to consume: clear errors or stale data if possible
+    func refreshIfNeeded()
+    /// Clean up any cached data or state
+    func logout()
+
+//    func subscribe(_ subscriber: SubscriptionProtocol)
+//    func unsubscribe(_ subscriber: SubscriptionProtocol)
+}
+
+public extension ExpManagerProtocol {
+    /// Give managers a chance to subscribe to other services
+    func start(with container: DataContainer) {}
+    /// Wrap AnySubscriber type erasure
+//    func subscribe(_ subscriber: SubscriptionProtocol) {
+//        publisher.subscribe(subscriber)
+//    }
+//    /// un-used
+//    func unsubscribe(_ subscriber: SubscriptionProtocol) {
+////        publisher.unsubscribe(subscriber)
+//    }
 }

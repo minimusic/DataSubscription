@@ -8,31 +8,6 @@
 
 import Foundation
 
-//public struct PublishMessageType: OptionSet {
-//    // These are subscription types, we could have different, more specific publish messages (e.g. beganLoading)
-//    // but we'll need a clear way to indicate which messages match which category
-//    public let rawValue: Int
-//    // some subscribers may only want a one time access, can use subscriptionBegan, then removed from list?
-//    public static let subscriptionBegan = PublishMessageType(rawValue: 1 << 0)
-//    public static let dataMessages = PublishMessageType(rawValue: 1 << 1)
-//    public static let errorMessages = PublishMessageType(rawValue: 1 << 2)
-//    public static let loadingMessages = PublishMessageType(rawValue: 1 << 3)
-//    // redefine allMessages for more than 8 types?
-//    public static let allMessages = PublishMessageType(rawValue: 127)
-//
-//    public init(rawValue: Int) {
-//        self.rawValue = rawValue
-//    }
-//}
-
-//public enum PublishError: Swift.Error {
-//    // Make this a struct to include data, user-facing description
-//    // Or we could use existing APIError type? Do we need any non-API errors here?
-//    case noError
-//    case serverUnreachable
-//    case invalidResponse
-//}
-
 public class ExplicitPublisher<Type, Protocol> {
     public enum PublisherState {
         case error(Error)
@@ -46,28 +21,17 @@ public class ExplicitPublisher<Type, Protocol> {
     }
     public var state: PublisherState = .unknown {
         didSet {
-            // store data
-            switch state {
-            case .loaded(let newData):
-                data = newData
-            default:
-                break
-            }
             publish()
         }
     }
+    // FIXME: refactor subscribers into a Set
     private var subscribers: [Subscriber] = [Subscriber]()
-    // Maybe these properties are read only publicly?
-    public var data: Type?
-//    public var isLoading: Bool = false
-//    // do we need an error stack to track multiple errors?
-//    public var error: PublishError = .noError
 
     public func updateData(_ newData: Type) {
         state = .loaded(newData)
     }
 
-    public func beginLoading() {
+    public func startLoading() {
         // Call for every request
         // Includes stale data if available.
         switch state {
@@ -78,9 +42,14 @@ public class ExplicitPublisher<Type, Protocol> {
         }
     }
 
-    public func addError(_ newError: Error) {
+    public func setError(_ newError: Error) {
         // Add new error to stack
         state = .error(newError)
+    }
+
+    /// Clear all data/state
+    public func reset() {
+        state = .unknown
     }
 
     public func publish() {
@@ -88,17 +57,17 @@ public class ExplicitPublisher<Type, Protocol> {
         for subscriber in subscribers {
             if let validSubscriber = subscriber.weakRef?.value {
                 // send message to valid subscriber
-                self.publish(to: validSubscriber, with: state)
+                self.publish(to: validSubscriber)
                 newSubscribers.append(subscriber)
             }
         }
         subscribers = newSubscribers
     }
 
-    public func publish(to subscriber: Protocol, with state: PublisherState) {
+    public func publish(to subscriber: Protocol) {
         fatalError("ExplicitPublisher subclass must override publish()")
         /* EXAMPLE OVERRIDE:
-         override public func publish(to subscriber: ASubscriberProtocol, with message: PublishMessageType) {
+         override public func publish(to subscriber: SubscriberProtocol, with message: PublishMessageType) {
          subscriber.publisher(self, sentMessage: message)
          }
          */
