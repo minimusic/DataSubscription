@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// Flexible view with centered loading spinner
 class LoadingProvider {
     static func getView() -> UIView {
         // Overlay view can be resized by consumer to block content
@@ -25,8 +26,8 @@ class LoadingProvider {
 
 }
 
-
-
+/// Flexible view with centered error message and reload CTA
+/// delegate protocol to handle CTA action
 public protocol ErrorViewDelegate: AnyObject {
     func errorViewWantsRefresh(_ errorView: ErrorView)
 }
@@ -48,6 +49,7 @@ public class ErrorView: UIView {
         let label = UILabel()
         addSubview(label)
         label.translatesAutoresizingMaskIntoConstraints = false
+        // FIXME: break out strings for localizing
         label.text = "ERROR"
 
         let button = UIButton(type: .custom)

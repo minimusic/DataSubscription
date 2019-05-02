@@ -59,7 +59,7 @@ class ExplicitPubViewController: UIViewController {
     // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.title = "Eplicit Publisher"
+        self.title = "Explicit Publisher"
 
         // Table
         view.addSubview(tableView)
@@ -138,7 +138,6 @@ extension ExplicitPubViewController: ErrorViewDelegate {
 
 /// Recieve data state publication and convert to local view state
 /// setting the view state should refresh UI appropriately
-
 extension ExplicitPubViewController: ExplicitSubscriber {
     func publication(from publisher: DataModelPublisher) {
         switch publisher.state {
@@ -147,36 +146,11 @@ extension ExplicitPubViewController: ExplicitSubscriber {
         case .error(let theError):
             state = .error(theError)
         case .loading:
-            // .loading(let oldData) includes any previously loaded data, when available
-            // but is un-used here
+            // .loading(let oldData) would include any previous data, if available
             state = .loading
         case .unknown:
             //
             break
         }
     }
-
-
 }
-
-//extension ExplicitPubViewController: SubscriberProtocol {
-//    public func publication(from publisher: AnyPublisher) {
-//        if let publisher = publisher as? Publisher<[DataModel]> {
-//            switch publisher.state {
-//            case .loaded(let newData):
-//                state = .loaded(newData)
-//            case .error(let theError):
-//                state = .error(theError)
-//            case .loading:
-//                // .loading(let oldData) includes any previously loaded data, when available
-//                // but is un-used here
-//                state = .loading
-//            case .unknown:
-//                //
-//                break
-//            }
-//        } else {
-//            print("Recieved un-handled publication.")
-//        }
-//    }
-//}

@@ -24,7 +24,7 @@ public class ExplicitPublisher<Type, Protocol> {
             publish()
         }
     }
-    // FIXME: refactor subscribers into a Set
+    // FIXME: refactor explicit subscribers into a Set
     private var subscribers: [Subscriber] = [Subscriber]()
 
     public func updateData(_ newData: Type) {
@@ -35,8 +35,8 @@ public class ExplicitPublisher<Type, Protocol> {
         // Call for every request
         // Includes stale data if available.
         switch state {
-        case .loaded(let data):
-            state = .loading(data)
+        case .loaded(let oldData):
+            state = .loading(oldData)
         default:
             state = .loading(nil)
         }
@@ -83,17 +83,7 @@ public class ExplicitPublisher<Type, Protocol> {
 
     public func unsubscribe(_ object: Protocol) {
         // Remove from list of subscribers
-//        var newSubscribers: [Subscriber] = [Subscriber]()
-//        for subscriber in subscribers {
-//            if let validSubscriber = subscriber.weakRef?.value {
-//                // remove message from valid subscriber
-//                if validSubscriber === object {
-//                    // if any message types remain, keep subscriber
-//                    newSubscribers.append(subscriber)
-//                }
-//            }
-//        }
-//        subscribers = newSubscribers
+        // FIXME: refactor for subscriber set
     }
 
     private struct Subscriber {

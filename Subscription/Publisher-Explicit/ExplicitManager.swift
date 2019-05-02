@@ -21,10 +21,6 @@ public protocol ExplicitSubscriber: AnyObject {
 public final class ExplicitManager: NSObject {
     public let publisher = DataModelPublisher()
 
-    //    public init() {
-    //        publisher = NewPublisher<[DataModel]>()
-    //    }
-
     public func getData() {
         publisher.startLoading()
         DataEndpoint.getShipment() { (response) in

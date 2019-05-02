@@ -15,6 +15,7 @@ class GenericPubViewController: UIViewController {
         case loading
         case loaded([DataModel])
     }
+    
     /// Update UI when view state changes
     var state: ViewState = .loading {
         didSet {
@@ -146,8 +147,7 @@ extension GenericPubViewController: GenericSubscriberProtocol {
         case .error(let theError):
             state = .error(theError)
         case .loading:
-            // .loading(let oldData) includes any previously loaded data, when available
-            // but is un-used here
+            // .loading(let oldData) would include any previous data, if available
             state = .loading
         case .unknown:
             break

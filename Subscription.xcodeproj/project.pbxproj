@@ -10,8 +10,6 @@
 		63055E6022121F900039C3C5 /* Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63055E5F22121F900039C3C5 /* Publisher.swift */; };
 		63055E6222121FA00039C3C5 /* DataContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63055E6122121FA00039C3C5 /* DataContainer.swift */; };
 		630E8823216EB367007BC027 /* GenericPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E8822216EB367007BC027 /* GenericPublisher.swift */; };
-		630E8825216EB6E2007BC027 /* NewTestPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E8824216EB6E2007BC027 /* NewTestPublisher.swift */; };
-		630E8827216EB75A007BC027 /* TestObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 630E8826216EB75A007BC027 /* TestObject.swift */; };
 		6323979F2278F4CC005EB754 /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6323979E2278F4CC005EB754 /* Manager.swift */; };
 		632397A1227B64D1005EB754 /* LoadingProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632397A0227B64D1005EB754 /* LoadingProvider.swift */; };
 		632397A3227B6A0C005EB754 /* GenericPubViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632397A2227B6A0C005EB754 /* GenericPubViewController.swift */; };
@@ -23,10 +21,7 @@
 		63926271216D2590001D8D37 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63926270216D2590001D8D37 /* ViewController.swift */; };
 		63926276216D2592001D8D37 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63926275216D2592001D8D37 /* Assets.xcassets */; };
 		63926279216D2592001D8D37 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63926277216D2592001D8D37 /* LaunchScreen.storyboard */; };
-		63926281216D2612001D8D37 /* PetService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63926280216D2612001D8D37 /* PetService.swift */; };
 		63926283216D26B2001D8D37 /* ExplicitPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63926282216D26B2001D8D37 /* ExplicitPublisher.swift */; };
-		63926285216D2701001D8D37 /* PetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63926284216D2701001D8D37 /* PetData.swift */; };
-		63926287216D2803001D8D37 /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63926286216D2803001D8D37 /* Pet.swift */; };
 		63C09898224EC3180054BE07 /* PublisherViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C09897224EC3180054BE07 /* PublisherViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -34,8 +29,6 @@
 		63055E5F22121F900039C3C5 /* Publisher.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Publisher.swift; sourceTree = "<group>"; };
 		63055E6122121FA00039C3C5 /* DataContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataContainer.swift; sourceTree = "<group>"; };
 		630E8822216EB367007BC027 /* GenericPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPublisher.swift; sourceTree = "<group>"; };
-		630E8824216EB6E2007BC027 /* NewTestPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTestPublisher.swift; sourceTree = "<group>"; };
-		630E8826216EB75A007BC027 /* TestObject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestObject.swift; sourceTree = "<group>"; };
 		6323979E2278F4CC005EB754 /* Manager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
 		632397A0227B64D1005EB754 /* LoadingProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingProvider.swift; sourceTree = "<group>"; };
 		632397A2227B6A0C005EB754 /* GenericPubViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericPubViewController.swift; sourceTree = "<group>"; };
@@ -49,10 +42,7 @@
 		63926275216D2592001D8D37 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		63926278216D2592001D8D37 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		6392627A216D2592001D8D37 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		63926280216D2612001D8D37 /* PetService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetService.swift; sourceTree = "<group>"; };
 		63926282216D26B2001D8D37 /* ExplicitPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExplicitPublisher.swift; sourceTree = "<group>"; };
-		63926284216D2701001D8D37 /* PetData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PetData.swift; sourceTree = "<group>"; };
-		63926286216D2803001D8D37 /* Pet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pet.swift; sourceTree = "<group>"; };
 		63C09897224EC3180054BE07 /* PublisherViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublisherViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -91,8 +81,8 @@
 			isa = PBXGroup;
 			children = (
 				632397A4227B6AAF005EB754 /* ExplicitPubViewController.swift */,
-				63926282216D26B2001D8D37 /* ExplicitPublisher.swift */,
 				632397A8227B9389005EB754 /* ExplicitManager.swift */,
+				63926282216D26B2001D8D37 /* ExplicitPublisher.swift */,
 			);
 			path = "Publisher-Explicit";
 			sourceTree = "<group>";
@@ -126,11 +116,6 @@
 				6312A3E52229DF7C00182BCD /* Publisher */,
 				6312A3E62229DF8C00182BCD /* Punlisher-Generic */,
 				6312A3E72229DFA300182BCD /* Publisher-Explicit */,
-				63926286216D2803001D8D37 /* Pet.swift */,
-				63926280216D2612001D8D37 /* PetService.swift */,
-				63926284216D2701001D8D37 /* PetData.swift */,
-				630E8824216EB6E2007BC027 /* NewTestPublisher.swift */,
-				630E8826216EB75A007BC027 /* TestObject.swift */,
 				63055E6122121FA00039C3C5 /* DataContainer.swift */,
 			);
 			path = Subscription;
@@ -206,19 +191,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				63926285216D2701001D8D37 /* PetData.swift in Sources */,
 				63C09898224EC3180054BE07 /* PublisherViewController.swift in Sources */,
-				630E8825216EB6E2007BC027 /* NewTestPublisher.swift in Sources */,
-				63926281216D2612001D8D37 /* PetService.swift in Sources */,
 				6323979F2278F4CC005EB754 /* Manager.swift in Sources */,
 				632397A3227B6A0C005EB754 /* GenericPubViewController.swift in Sources */,
 				633FB53C224E92140098716C /* FakeService.swift in Sources */,
-				630E8827216EB75A007BC027 /* TestObject.swift in Sources */,
 				63055E6022121F900039C3C5 /* Publisher.swift in Sources */,
 				63926271216D2590001D8D37 /* ViewController.swift in Sources */,
 				632397A7227B6B60005EB754 /* GenManager.swift in Sources */,
 				632397A1227B64D1005EB754 /* LoadingProvider.swift in Sources */,
-				63926287216D2803001D8D37 /* Pet.swift in Sources */,
 				632397A9227B9389005EB754 /* ExplicitManager.swift in Sources */,
 				630E8823216EB367007BC027 /* GenericPublisher.swift in Sources */,
 				63055E6222121FA00039C3C5 /* DataContainer.swift in Sources */,

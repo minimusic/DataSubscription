@@ -104,16 +104,3 @@ extension ViewController: UITableViewDataSource {
         return cell
     }
 }
-
-//extension ViewController: SubscriberProtocol {
-//    //typealias dataType = Array<TestObject>
-//
-//    func publication(from publisher: NewPublisher<[TestObject]>) {
-//        // handle data update
-//        if let newData = publisher.data{
-//            curData = newData
-//        }
-//        print("Subscriber Received: \(curData)")
-////        let newData = publisher.data
-//    }
-//}

@@ -20,9 +20,7 @@ public protocol SubscriberProtocol: AnyHashable {
 // FIXME: replace type-erasure with flatter concrete type?
 public final class AnySubscriber: SubscriberProtocol {
     private let box: _AnySubscriberBase
-//    public var hashValue: Int {
-//        return box.hashValue
-//    }
+
     public func hash(into hasher: inout Hasher) {
         box.hash(into: &hasher)
     }
@@ -49,9 +47,6 @@ public final class AnySubscriber: SubscriberProtocol {
 }
 
 private class _AnySubscriberBase: SubscriberProtocol {
-//    var hashValue: Int {
-//        fatalError("Must override")
-//    }
     public func hash(into hasher: inout Hasher) {
         fatalError("Must override")
     }
@@ -83,9 +78,7 @@ private class _AnySubscriberBase: SubscriberProtocol {
 private final class _AnySubscriberBox<Concrete: SubscriberProtocol>: _AnySubscriberBase {
     // variable used since we're calling mutating functions
     weak var concrete: Concrete?
-//    override public var hashValue: Int {
-//        return concrete.hashValue
-//    }
+
     override public func hash(into hasher: inout Hasher) {
         concrete.hash(into: &hasher)
     }
@@ -148,7 +141,7 @@ open class Publisher<Type>: AnyPublisher {
     /// Add subscriber to set, publish if new subscriber
     public func subscribe(_ object: AnySubscriber) {
         // Add to list of subscribers
-        // Caller must be wrapped: AnyNewSubscriber(self)
+        // Caller must be wrapped: AnySubscriber(self)
         if subscribers.contains(object) {
             // re-publish to duplicate subscriber?
         } else {

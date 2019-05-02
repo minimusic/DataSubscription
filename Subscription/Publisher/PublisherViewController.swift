@@ -15,7 +15,8 @@ class PublisherViewController: UIViewController {
         case loading
         case loaded([DataModel])
     }
-    /// Update UI when view state changes
+
+    /// Update UI when viewState changes
     var state: ViewState = .loading {
         didSet {
             tableView.backgroundView = nil
@@ -146,8 +147,7 @@ extension PublisherViewController: SubscriberProtocol {
             case .error(let theError):
                 state = .error(theError)
             case .loading:
-                // .loading(let oldData) includes any previously loaded data, when available
-                // but is un-used here
+                // .loading(let oldData) would include any previous data, if available
                 state = .loading
             case .unknown:
                 //
