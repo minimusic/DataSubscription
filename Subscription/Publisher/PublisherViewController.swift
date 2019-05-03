@@ -150,7 +150,8 @@ extension PublisherViewController: SubscriberProtocol {
                 // .loading(let oldData) would include any previous data, if available
                 state = .loading
             case .unknown:
-                //
+                // not handled in this app, but you may want to clear local cached state
+                // or simply show a loading ViewState as needed.
                 break
             }
         } else {

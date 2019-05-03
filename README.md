@@ -38,12 +38,58 @@ Currently all publisher types are created and managed by a Manager object, thoug
 
 ### Create a Publisher
 
-To do
+Create and retain a Publisher of the desired type:
+```swift
+public let publisher = Publisher<[DataModel]>()
+```
+This means we will be publishing an array of `DataModel` objects/values. In many casses you may need to create a wrapper type to manage the data structure.
+
+When data is fetched, update the Publisher state:
+```swift
+publisher.startLoading()
+DataEndpoint.getShipment() { (response) in
+switch response {
+case .success(let newData):
+self.publisher.updateData(newData)
+case .failure(let error):
+self.publisher.setError(error)
+}
+}
+```
+
+To clear/reset the publisher, set it back to the unknown state. This should only be done if the data is dependant on a login state or other external requirement:
+```swift
+publisher.reset()
+```
 
 ### Subscribe to the Publisher
 
-To do
+You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe:
+```swift
+container.manager.subscribe(self)
+```
 
 ### Consume publication
 
-To do
+Conform to `SubscriberProtocol` and then test for the data types you want to handle. Switch on the publisher's state to handle all cases.
+
+```swift
+extension PublisherViewController: SubscriberProtocol {
+public func publication(from publisher: AnyPublisher) {
+if let publisher = publisher as? Publisher<[DataModel]> {
+switch publisher.state {
+case .loaded(let newData):
+viewState = .loaded(newData)
+case .error(let theError):
+viewState = .error(theError)
+case .loading:
+// .loading(let oldData) would include any previous data, if available
+viewState = .loading
+case .unknown:
+// Clear out UI as needed if logout is a factor
+break
+}
+}
+}
+}
+```
