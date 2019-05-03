@@ -1,11 +1,16 @@
 # DataSubscription
-multi-delegate broadcasting
+## multi-delegate broadcasting
 
 Delegate protocols allow for tightly coupled communication between architectural layers (parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but is inherently a one-to-one relationship. In any asynchronous, data-driven flow (requesting remote content) there is often a need for many-to-many communication which may be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
 
 This solution is closest to block stores, where an object submits a block to be executed whenever the data updates, but attempts to avoid many hazards of passing blocks (an open door to unexpected retentions, lazy code structure, etc.). Instead, an object simply registers itself as a "subscriber" of a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of that data. Implementation is closer to delegation with protocol, but allows for many delegates.
 
-ARCHITECTURE
+## GOAL
+
+Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type, before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
+
+## ARCHITECTURE
+
 There are three distinct flavors of the Publisher/Subscriber code, each with some advantages and disadvantages.
 
 1 - The fully "generic" version requires no boilerplate and has strong contracts in both directions. Simply init an instance for the desired data type and the generic publisher can publish to any object subscribing to the protocol with the matching associated type. This requires some complexity to handle "AnySubscriber" type-erasure, but the complexity is all confined to the generic class. Unfortunately, due to a limitation of Swift, a subscriber can only conform to the protocol once, so one publisher can broadcast to many subscribers, but no object can subscribe to more than one publisher. (One-to-many)
@@ -16,12 +21,29 @@ There are three distinct flavors of the Publisher/Subscriber code, each with som
 
 The third version is the current "favorite" balance of compromises, but that could change as each version (and the Swift language) evolves.
 
-STATE
-Any publisher can be in one of four states: initialized, loading, loaded, error.
+## STATE
 
-Initialized - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
-Loading - A request has been made for new data, but the new data has not yet been loaded. The Loading state may include previous but possibly stale data.
-Loaded - The publisher has successfully loaded new data, OR there is cached data available. Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but ready to be presented).
-Error - An attempt to load the data could not be completed. Error data is included in the state.
+Any publisher can be in one of four states: .initialized, .loading, .loaded, .error.
 
-This state should always be consumed by each subscriber with a exhaustive switch statement to ensure all cases are being considered/handled. Ideally, each published data state is mapped to a matching ViewState.
+- Initialized - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
+- Loading - A request has been made for new data, but the new data has not yet been loaded. The Loading state may include previous but possibly stale data.
+- Loaded - The publisher has successfully loaded new data, OR there is cached data available. Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but ready to be presented).
+- Error - An attempt to load the data could not be completed. Error data is included in the state.
+
+This state should always be consumed by each subscriber with an exhaustive switch statement to ensure that all cases are being considered/handled. Ideally, each published data state is mapped to a matching ViewState.
+
+## USAGE
+
+Currently all publisher types are created and managed by a Manager object, though these could likely be merged into a single object in most cases. The manager is the publicly exposed API for subscribing and requesting data refresh, and also responsible for calling endpoints/services and defining the type of data published. For now I am only going to describe how to use the final "Publisher" (Type number 3 above). First we'll instantiate a Publisher in our manager object, and then we'll subscribe to it from the UI and handle a publication of data.
+
+### Create a Publisher
+
+To do
+
+### Subscribe to the Publisher
+
+To do
+
+### Consume publication
+
+To do
