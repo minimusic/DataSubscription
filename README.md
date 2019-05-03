@@ -48,12 +48,12 @@ When data is fetched, update the Publisher state:
 ```swift
 publisher.startLoading()
 DataEndpoint.getShipment() { (response) in
-switch response {
-case .success(let newData):
-self.publisher.updateData(newData)
-case .failure(let error):
-self.publisher.setError(error)
-}
+    switch response {
+    case .success(let newData):
+        self.publisher.updateData(newData)
+    case .failure(let error):
+        self.publisher.setError(error)
+    }
 }
 ```
 
@@ -75,21 +75,21 @@ Conform to `SubscriberProtocol` and then test for the data types you want to han
 
 ```swift
 extension PublisherViewController: SubscriberProtocol {
-public func publication(from publisher: AnyPublisher) {
-if let publisher = publisher as? Publisher<[DataModel]> {
-switch publisher.state {
-case .loaded(let newData):
-viewState = .loaded(newData)
-case .error(let theError):
-viewState = .error(theError)
-case .loading:
-// .loading(let oldData) would include any previous data, if available
-viewState = .loading
-case .unknown:
-// Clear out UI as needed if logout is a factor
-break
-}
-}
-}
+    public func publication(from publisher: AnyPublisher) {
+        if let publisher = publisher as? Publisher<[DataModel]> {
+            switch publisher.state {
+            case .loaded(let newData):
+                viewState = .loaded(newData)
+            case .error(let theError):
+                viewState = .error(theError)
+            case .loading:
+                // .loading(let oldData) would include any previous data, if available
+                viewState = .loading
+            case .unknown:
+                // Clear out UI as needed if logout is a factor
+                break
+            }
+        }
+    }
 }
 ```
