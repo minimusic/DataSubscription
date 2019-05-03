@@ -97,30 +97,15 @@ public extension GenManagerProtocol {
 }
 
 public protocol ExpManagerProtocol {
-//    associatedtype PublishedType
-//    associatedtype SubscriptionProtocol
-//    var publisher: ExplicitPublisher<PublishedType, SubscriptionProtocol> { get }
-//    var publisher: ExplicitPublisher<PublishedType, SubscriptionProtocol> { get }
     /// Give managers a chance to subscribe to other services
     func start(with container: DataContainer)
     /// subscriber is ready to consume: clear errors or stale data if possible
     func refreshIfNeeded()
     /// Clean up any cached data or state
     func logout()
-
-//    func subscribe(_ subscriber: SubscriptionProtocol)
-//    func unsubscribe(_ subscriber: SubscriptionProtocol)
 }
 
 public extension ExpManagerProtocol {
     /// Give managers a chance to subscribe to other services
     func start(with container: DataContainer) {}
-    /// Wrap AnySubscriber type erasure
-//    func subscribe(_ subscriber: SubscriptionProtocol) {
-//        publisher.subscribe(subscriber)
-//    }
-//    /// un-used
-//    func unsubscribe(_ subscriber: SubscriptionProtocol) {
-////        publisher.unsubscribe(subscriber)
-//    }
 }

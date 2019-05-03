@@ -9,6 +9,14 @@ This solution is closest to block stores, where an object submits a block to be 
 
 Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type, before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
 
+### Possible changes/improvements
+- Rename `.unknown` state: `.initialized`.
+- Merge `Manager` and `Publisher` for flatter architecture.
+- Include timestamps to handle stale data.
+- Include mechanism for paged data.
+- Present system alert for errors in example app.
+- Caching.
+
 ## ARCHITECTURE
 
 There are three distinct flavors of the Publisher/Subscriber code, each with some advantages and disadvantages.
@@ -23,9 +31,9 @@ The third version is the current "favorite" balance of compromises, but that cou
 
 ## STATE
 
-Any publisher can be in one of four states: .initialized, .loading, .loaded, .error.
+Any publisher can be in one of four states: .unknown, .loading, .loaded, .error.
 
-- Initialized - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
+- Unknown - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
 - Loading - A request has been made for new data, but the new data has not yet been loaded. The Loading state may include previous but possibly stale data.
 - Loaded - The publisher has successfully loaded new data, OR there is cached data available. Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but ready to be presented).
 - Error - An attempt to load the data could not be completed. Error data is included in the state.
@@ -95,6 +103,25 @@ extension PublisherViewController: SubscriberProtocol {
                 break
             }
         }
+    }
+}
+```
+It is up to the app design to determine when and how often to update the data, or how agressively to recover from error states. Both can be done through the `ManagerProtocol`:
+
+```swift
+manager.refreshIfNeeded()
+```
+
+There is no default implimentation, but is generally used just to clear errors (possibly called in subscriber's `ViewWillAppear()`). It would be overzealous to always refetch the data here:
+
+```swift
+public func refreshIfNeeded() {
+    switch publisher.state {
+    case .error:
+        // refresh if in error state
+        getData()
+    default:
+        break
     }
 }
 ```
