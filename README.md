@@ -56,7 +56,7 @@ Create and retain a Publisher of the desired type:
 ```swift
 public let publisher = Publisher<[DataModel]>()
 ```
-This means we will be publishing an array of `DataModel` objects/values. In many casses you may need to create a wrapper type to manage the data structure.
+This means we will be publishing an array of `DataModel` objects/values. In many casses you may need to create a wrapper type to manage the data structure (e.g. if you want to publish two different `String` arrays, you would wrap them in unique types: `SongNames` and `AlbumNames` so they can be uniquely published).
 
 When data is fetched, update the Publisher state:
 ```swift
@@ -78,19 +78,19 @@ publisher.reset()
 
 ### Subscribe to the Publisher
 
-You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe. In this example, dependancy injection is handle by a global `container` object:
+You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe (e.g. don't subscribe before your `UITableView` has been created). In this example, dependancy injection is handle by a global `container` object:
 ```swift
 container.manager.subscribe(self)
 ```
 
-If you are not using the `ManagerProtocol`, you will need to subscribe directly wrapping `self` with `AnySubscriber`:
+If you are not using the `ManagerProtocol`, you will need to subscribe directly wrapping the subscriber with `AnySubscriber`:
 ```swift
 publisher.subscribe(AnySubscriber(self))
 ```
 
 ### Consume publication
 
-Conform to `SubscriberProtocol` and then test for the data types you want to handle. Switch on the publisher's state to handle all cases.
+Conform to `SubscriberProtocol` and then test for the data types you want to handle. Switch on the publisher's state to handle all cases. It is very bad form to hide any states with a `default` case, except in very rare situations (like a global error handler that subscribes to all publishers, but only handles error states).
 
 ```swift
 extension PublisherViewController: SubscriberProtocol {
@@ -112,13 +112,17 @@ extension PublisherViewController: SubscriberProtocol {
     }
 }
 ```
-It is up to the app design to determine when and how often to update the data, or how agressively to recover from error states. Both can be done through the `ManagerProtocol`:
+It is up to the app design to determine when and how often to update the data, or how agressively to recover from error states. Both can be done through the `ManagerProtocol` with `refreshIfNeeded()`. This mechanism can prevent a view getting stuck in an error, but may not be needed if UX properly allows user to manually refresh:
 
 ```swift
-manager.refreshIfNeeded()
+override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    // Try to clear any errors when user visits screen
+    container.manager.refreshIfNeeded()
+}
 ```
 
-There is no default implimentation, but is generally used just to clear errors (possibly called in subscriber's `ViewWillAppear()`). It would be overzealous to always refetch the data here:
+There is no default implimentation, but is generally used to clear errors. It would be overzealous to always refetch the data here:
 
 ```swift
 public func refreshIfNeeded() {
