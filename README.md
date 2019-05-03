@@ -64,9 +64,14 @@ publisher.reset()
 
 ### Subscribe to the Publisher
 
-You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe:
+You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe. In this example, dependancy injection is handle by a global `container` object:
 ```swift
 container.manager.subscribe(self)
+```
+
+If you are not using the `ManagerProtocol`, you will need to subscribe directly wrapping `self` with `AnySubscriber`:
+```swift
+publisher.subscribe(AnySubscriber(self))
 ```
 
 ### Consume publication
