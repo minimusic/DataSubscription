@@ -11,6 +11,7 @@ import Foundation
 public final class Manager: NSObject {
     public let publisher = Publisher<[DataModel]>()
 
+    /// Request data and update publisher state
     public func getData() {
         publisher.startLoading()
         DataEndpoint.getShipment() { (response) in

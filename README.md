@@ -7,15 +7,19 @@ This solution is closest to block stores, where an object submits a block to be 
 
 ## GOAL
 
-Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type, before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
+Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type (especially for clarity/readability and ease-of-use), before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
 
 ### Possible changes/improvements
 - Rename `.unknown` state: `.initialized`.
 - Merge `Manager` and `Publisher` for flatter architecture.
-- Include timestamps to handle stale data.
+- Flatten type-erasure for simpler concrete subscriber type
+- Include timestamps to handle stale data (add a `.stale(oldData)` state?)
 - Include mechanism for paged data.
 - Present system alert for errors in example app.
 - Caching.
+- Reduce boilerplate in explicit publisher usage
+- Work around one-to-many restriction of generic publisher
+- Better fix for swift protocol bug in explicit publisher
 
 ## ARCHITECTURE
 

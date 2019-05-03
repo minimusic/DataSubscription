@@ -78,6 +78,12 @@ class PublisherViewController: UIViewController {
         navigationItem.rightBarButtonItem = refreshButton
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Try to clear any errors when user visits screen
+        container.manager.refreshIfNeeded()
+    }
+
     @objc func refreshData() {
         container.manager.getData()
     }
