@@ -5,6 +5,8 @@ Delegate protocols allow for tightly coupled communication between architectural
 
 This solution is closest to block stores, where an object submits a block to be executed whenever the data updates, but attempts to avoid many hazards of passing blocks (an open door to unexpected retentions, lazy code structure, etc.). Instead, an object simply registers itself as a "subscriber" of a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of that data. Implementation is closer to delegation with protocol, but allows for many delegates.
 
+The intent is to make the code more easily traceable in both directions (observers, for example, are often invisible from one direction), enforce more formalized structure to avoid mistakes/bugs/oversights, and simplify implementation and organization of data consumption.
+
 ## GOAL
 
 Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type (especially for clarity/readability and ease-of-use), before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
@@ -20,6 +22,7 @@ Seeking feedback to see if there are opportunities to improve any of the three v
 - Reduce boilerplate in explicit publisher usage
 - Work around one-to-many restriction of generic publisher
 - Better fix for swift protocol bug in explicit publisher
+- Always allow access to "previousDate" (in `.error` and `.loaded` states, not just `.loading`)
 
 A version of this architecture shipped in the Grove app, which includes examples of handling stale date, paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
 
@@ -41,14 +44,14 @@ Any publisher can be in one of four states: .unknown, .loading, .loaded, .error.
 
 - Unknown - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
 - Loading - A request has been made for new data, but the new data has not yet been loaded. The Loading state may include previous but possibly stale data.
-- Loaded - The publisher has successfully loaded new data, OR there is cached data available. Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but ready to be presented).
+- Loaded - The publisher has successfully loaded new data (OR could be used for available cached data). Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but it is ready to be presented).
 - Error - An attempt to load the data could not be completed. Error data is included in the state.
 
 This state should always be consumed by each subscriber with an exhaustive switch statement to ensure that all cases are being considered/handled. Ideally, each published data state is mapped to a matching ViewState.
 
 ## USAGE
 
-Currently all publisher types are created and managed by a Manager object, though these could likely be merged into a single object in most cases. The manager is the publicly exposed API for subscribing and requesting data refresh, and also responsible for calling endpoints/services and defining the type of data published. For now I am only going to describe how to use the final "Publisher" (Type number 3 above). First we'll instantiate a Publisher in our manager object, and then we'll subscribe to it from the UI and handle a publication of data.
+Currently all `Publisher` types are created and managed by `Manager` objects, though these could likely be merged into a single object in most cases. The manager is the publicly exposed API for subscribing and requesting data refresh, and also responsible for calling endpoints/services and defining the type of data published. For now I am only going to describe how to use the final "Publisher" (type 3 above). First we'll instantiate a Publisher in our manager object, and then we'll subscribe to it from the UI and handle a data publication.
 
 ### Create a Publisher
 
