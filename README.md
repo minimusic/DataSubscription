@@ -21,6 +21,8 @@ Seeking feedback to see if there are opportunities to improve any of the three v
 - Work around one-to-many restriction of generic publisher
 - Better fix for swift protocol bug in explicit publisher
 
+A version of this architecture shipped in the Grove app, which includes examples of handling stale date, paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
+
 ## ARCHITECTURE
 
 There are three distinct flavors of the Publisher/Subscriber code, each with some advantages and disadvantages.
