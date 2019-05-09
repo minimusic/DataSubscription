@@ -14,7 +14,7 @@ public protocol GenericSubscriberProtocol: AnyHashable {
 }
 
 /// Public type erasing wrapper class
-/// Implements the SubscriberProtocol Generic around the associated type
+/// Implements the GenericSubscriberProtocol Generic around the associated type
 public final class AnyGenSubscriber<DataType>: GenericSubscriberProtocol {
     private let box: _AnyGenSubscriberBase<DataType>
 
@@ -29,7 +29,7 @@ public final class AnyGenSubscriber<DataType>: GenericSubscriberProtocol {
         return false
     }
 
-    // Initializer takes our concrete implementer of SubscriberProtocol
+    // Initializer takes our concrete implementer of GenericSubscriberProtocol
     public init<Concrete: GenericSubscriberProtocol>(_ concrete: Concrete) where Concrete.DataType == DataType {
         box = _AnyGenSubscriberBox(concrete)
     }
@@ -118,7 +118,7 @@ open class GenericPublisher<Type>: NSObject {
     }
 }
 
-// Abstract generic base class that implements SubscriberProtocol
+// Abstract generic base class that implements GenericSubscriberProtocol
 // Generic parameter around the associated type
 private class _AnyGenSubscriberBase<DataType>: GenericSubscriberProtocol {
     public func hash(into hasher: inout Hasher) {
@@ -133,7 +133,7 @@ private class _AnyGenSubscriberBase<DataType>: GenericSubscriberProtocol {
 
     init() {
         guard type(of: self) != _AnyGenSubscriberBase.self else {
-            fatalError("_AnySubscriberBase<dataType> instances can not be created, create a subclass instance instead")
+            fatalError("_AnyGenSubscriberBase<dataType> instances can not be created, create a subclass instance instead")
         }
     }
 
@@ -148,7 +148,7 @@ private class _AnyGenSubscriberBase<DataType>: GenericSubscriberProtocol {
 
 // weak Box class
 // final subclass of our abstract base inherits the protocol conformance
-// Links Concrete.Model (associated type) to _AnyRowBase.Model (generic parameter)
+// Links Concrete.Model (associated type) to _AnyGenSubscriberBase.Model (generic parameter)
 private final class _AnyGenSubscriberBox<Concrete: GenericSubscriberProtocol>: _AnyGenSubscriberBase<Concrete.DataType> {
     // variable used since we're calling mutating functions
     weak var concrete: Concrete?

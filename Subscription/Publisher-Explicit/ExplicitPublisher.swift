@@ -110,7 +110,7 @@ extension ExplicitPublisher where Protocol: AnyObject {
 }
 
 struct WeakWrapper<T> {
-    // Work-around to handle Swift bug (SR-55), see "Subscriber" for more
+    // Work-around to handle Swift bug (SR-55), see "Subscriber" struct for more
     var value: T? {
         if let _obj = _obj {
             // Cast our reference back to the correct type

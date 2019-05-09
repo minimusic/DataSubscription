@@ -1,11 +1,16 @@
 # DataSubscription
 ## multi-delegate broadcasting
 
-Delegate protocols allow for tightly coupled communication between architectural layers (parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but is inherently a one-to-one relationship. In any asynchronous, data-driven flow (requesting remote content) there is often a need for many-to-many communication which may be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
+Delegate protocols allow for tightly coupled communication between architectural layers (parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but are inherently a one-to-one relationship. In any asynchronous, data-driven flow (requesting remote content) there is often a need for many-to-many communication which may be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
 
 This solution is closest to block stores, where an object submits a block to be executed whenever the data updates, but attempts to avoid many hazards of passing blocks (an open door to unexpected retentions, lazy code structure, etc.). Instead, an object simply registers itself as a "subscriber" of a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of that data. Implementation is closer to delegation with protocol, but allows for many delegates.
 
-The intent is to make the code more easily traceable in both directions (observers, for example, are often invisible from one direction), enforce more formalized structure to avoid mistakes/bugs/oversights, and simplify implementation and organization of data consumption.
+### The intent is to: 
+- Make the code more easily traceable in both directions (observers, for example, are often invisible from one direction)
+- Avoid any "black boxes" in private frameworks (like hidden side effects in NotificationCenter)
+- Enforce types (gcdMulticastDelegate doesn't enforce protocol conformance)
+- Formalized structure to avoid mistakes/bugs/oversights
+- Simplify implementation and organization of data consumption.
 
 ## GOAL
 

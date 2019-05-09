@@ -8,12 +8,14 @@
 
 import Foundation
 
+// Boilerplate setup for Explicit Publisher: must subclass to override publish function
 public class DataModelPublisher: ExplicitPublisher<[DataModel], ExplicitSubscriber> {
     override public func publish(to subscriber: ExplicitSubscriber) {
         subscriber.publication(from: self)
     }
 }
 
+// Boilerplate setup for Explicit Publisher: must set up unique protocol for each publisher
 public protocol ExplicitSubscriber: AnyObject {
     func publication(from publisher: DataModelPublisher)
 }
