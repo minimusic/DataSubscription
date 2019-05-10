@@ -12,27 +12,6 @@ This solution is closest to block stores, where an object submits a block to be 
 - Formalized structure to avoid mistakes/bugs/oversights
 - Simplify implementation and organization of data consumption.
 
-## GOAL
-
-Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type (especially for clarity/readability and ease-of-use), before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
-
-### Possible changes/improvements
-- Rename `.unknown` state: `.initialized`.
-- Merge `Manager` and `Publisher` for flatter architecture.
-- Flatten type-erasure for simpler concrete subscriber type
-- Include timestamps to handle stale data (add a `.stale(oldData)` state?)
-- Include mechanism for paged data.
-- Present system alert for errors in example app.
-- Caching.
-- Reduce boilerplate in explicit publisher usage
-- Work around one-to-many restriction of generic publisher
-- Better fix for swift protocol bug in explicit publisher
-- Always allow access to "previousData" (in `.error` and `.loaded` states, not just `.loading`)
-- Implement hash for subscribers to avoid errors conforming to hashable (remove hashable requirement).
-- A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, React, etc.
-
-A version of this architecture shipped in the Grove app, which includes examples of handling stale data, paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
-
 ## ARCHITECTURE
 
 There are three distinct flavors of the Publisher/Subscriber code, each with some advantages and disadvantages.
@@ -134,15 +113,39 @@ override func viewWillAppear(_ animated: Bool) {
 }
 ```
 
-There is no default implimentation, but is generally used to clear errors. It would be overzealous to always refetch the data here:
+There is no default implimentation, but is generally used to clear errors or stale data. It would be overzealous to always refetch the data here (if data is `.loading` or `.loaded`):
 ```swift
 public func refreshIfNeeded() {
     switch publisher.state {
     case .error:
         // refresh if in error state
         getData()
+    case .loaded:
+        if publisher.isStale {
+            getData()
+        }
     default:
         break
     }
 }
 ```
+## GOAL
+
+Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type (especially for clarity/readability and ease-of-use), before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
+
+### Possible changes/improvements
+- Rename `.unknown` state: `.initialized`.
+- Merge `Manager` and `Publisher` for flatter architecture.
+- Flatten type-erasure for simpler concrete subscriber type
+- Include mechanism for paged data.
+- Present system alert for errors in example app.
+- Caching.
+- Reduce boilerplate in explicit publisher usage
+- Work around one-to-many restriction of generic publisher
+- Better fix for swift protocol bug in explicit publisher
+- Always allow access to "previousData" (in `.error` and `.loaded` states, not just `.loading`)
+- Implement hash for subscribers to avoid errors conforming to hashable (remove hashable requirement).
+- A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, React, etc.
+
+A version of this architecture shipped in the Grove app, which includes examples of handling stale data, paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
+

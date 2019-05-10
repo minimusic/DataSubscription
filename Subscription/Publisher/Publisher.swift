@@ -115,9 +115,41 @@ open class Publisher<Type>: AnyPublisher {
     }
 
     private var subscribers = Set<AnySubscriber>()
+    private var loadedTimestamp: Date?
+    /// nil duration means data never becomes stale
+    public var staleDuration: TimeInterval?
     public var state: PublisherState = .unknown {
         didSet {
+            switch state {
+            case .error:
+                break
+            case .loading:
+                break
+            case .loaded:
+                loadedTimestamp = Date()
+            case .unknown:
+                break
+            }
+            // Always publish the new state to all subscribers.
             publish()
+        }
+    }
+    /// Indicates if data should be re-fetched
+    public var isStale: Bool {
+        get {
+            // Only .loaded data can be stale
+            switch state {
+            case .loaded:
+                if let duration = staleDuration,
+                    let staleDate = loadedTimestamp?.addingTimeInterval(duration) {
+                    if staleDate < Date() {
+                        return true
+                    }
+                }
+            default:
+                break
+            }
+            return false
         }
     }
 
@@ -157,16 +189,17 @@ open class Publisher<Type>: AnyPublisher {
         subscribers.remove(object)
     }
 
-    /// Called by service to update state
+    /// Called by service to enter .loaded state
     public func updateData(_ newData: Type) {
         state = .loaded(newData)
     }
 
-    /// Clear all data/state
+    /// Clear all data/state, enter .unknown state
     public func reset() {
         state = .unknown
     }
 
+    /// Called by service to enter .loading state
     public func startLoading() {
         switch state {
         case .loaded(let staleData):
@@ -176,6 +209,7 @@ open class Publisher<Type>: AnyPublisher {
         }
     }
 
+    /// Called by service to enter .error state
     public func setError(_ error: Error) {
         state = .error(error)
     }
