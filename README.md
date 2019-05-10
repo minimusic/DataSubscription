@@ -70,7 +70,7 @@ public func logout() {
 
 ### Subscribe to the Publisher
 
-You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe (e.g. don't subscribe before your `UITableView` has been created). In this example, dependancy injection is handle by a global `container` object:
+You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe (e.g. don't subscribe before your `UITableView` has been created). In this example, dependancy injection is handled by a global `container` object:
 ```swift
 container.manager.subscribe(self)
 ```
@@ -146,6 +146,7 @@ Seeking feedback to see if there are opportunities to improve any of the three v
 - Always allow access to "previousData" (in `.error` and `.loaded` states, not just `.loading`)
 - Implement hash for subscribers to avoid errors conforming to hashable (remove hashable requirement).
 - A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, React, etc.
+- Add tests
 
-A version of this architecture shipped in the Grove app, which includes examples of handling stale data, paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
+A version of this architecture shipped in the Grove app, which includes examples of handling paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
 

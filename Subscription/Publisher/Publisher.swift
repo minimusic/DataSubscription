@@ -171,10 +171,10 @@ open class Publisher<Type>: AnyPublisher {
     }
 
     /// Add subscriber to set, publish if new subscriber
+    /// Caller must be wrapped: AnySubscriber(self)
     public func subscribe(_ object: AnySubscriber) {
-        // Add to list of subscribers
-        // Caller must be wrapped: AnySubscriber(self)
         if subscribers.contains(object) {
+            // already subscribed
             // re-publish to duplicate subscriber?
         } else {
             subscribers.insert(object)
@@ -182,10 +182,9 @@ open class Publisher<Type>: AnyPublisher {
         }
     }
 
-    /// Remove subscriber from set
+    /// Remove subscriber from list of subscribers
+    /// Caller must be wrapped: AnySubscriber(self)
     public func unsubscribe(_ object: AnySubscriber) {
-        // Remove from list of subscribers
-        // Caller must be wrapped: AnySubscriber(self)
         subscribers.remove(object)
     }
 
