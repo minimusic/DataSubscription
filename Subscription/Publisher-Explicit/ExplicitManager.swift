@@ -39,6 +39,7 @@ public final class ExplicitManager: NSObject {
 extension ExplicitManager: ExpManagerProtocol {
     public func start(with container: DataContainer) {
         // Not subscribing to anything
+        publisher.staleDuration = 60
         getData()
     }
 
@@ -47,6 +48,10 @@ extension ExplicitManager: ExpManagerProtocol {
         case .error:
             // refresh if in error state
             getData()
+        case .loaded:
+            if publisher.isStale {
+                getData()
+            }
         default:
             break
         }

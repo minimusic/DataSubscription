@@ -1,20 +1,24 @@
 # DataSubscription
 ## multi-delegate broadcasting
 
-Delegate protocols allow for tightly coupled communication between architectural layers (parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but are inherently a one-to-one relationship. In any asynchronous, data-driven flow (requesting remote content) there is often a need for many-to-many communication which may be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
+Delegate protocols allow for tightly coupled communication (between parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but are inherently a one-to-one relationship. In any asynchronous, data-driven flow (requesting remote content) there is often a need for many-to-many communication which may be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
 
-This solution is closest to block stores, where an object submits a block to be executed whenever the data updates, but attempts to avoid many hazards of passing blocks (an open door to unexpected retentions, lazy code structure, etc.). Instead, an object simply registers itself as a "subscriber" of a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of that data. Implementation is closer to delegation with protocol, but allows for many delegates.
+This `Publisher` solution is close to delegate protocols, but where a puslisher can have many delegates and a subscriber can be the delegate of many puiblishers. An object simply registers itself as one of a set of "subscribers" to a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of any subscribed data. By using the delegate protocol mechanism it is consistant and familiar with existing iOS/Swift practices.
+
+The target use-case is to serve any data that needs to be fetched asynchronously, where the data state will drive the UI. The sample app simulates an endpoint that includes random loading delays and errors to fully demonstrate the flow.
 
 ### The intent is to: 
 - Make the code more easily traceable in both directions (observers, for example, are often invisible from one direction)
-- Avoid any "black boxes" in private frameworks (like hidden side effects in NotificationCenter)
+- Avoid any "black boxes" (like hidden side effects in NotificationCenter or KVO magic)
+- Avoid blocks (an open door to unexpected retentions, lazy code structure, etc.)
 - Enforce types (gcdMulticastDelegate doesn't enforce protocol conformance)
 - Formalized structure to avoid mistakes/bugs/oversights
 - Simplify implementation and organization of data consumption.
+- Find unexpected bugs and limitations in Swift!
 
 ## ARCHITECTURE
 
-There are three distinct flavors of the Publisher/Subscriber code, each with some advantages and disadvantages.
+There are currently three distinct flavors of the Publisher/Subscriber code, each with some advantages and disadvantages.
 
 1 - `GenericPublisher` requires no boilerplate and has strong contracts in both directions. Simply init a `GenericPublisher` instance for the desired data type and it can publish to any object subscribing to the protocol with the matching associated type. This requires some complexity to handle "AnySubscriber" type-erasure, but the complexity is all confined to the generic class. Unfortunately, due to a limitation of Swift, a subscriber can only conform to the protocol once, so one publisher can broadcast to many subscribers, but no object can subscribe to more than one publisher. (One-to-many)
 
@@ -104,6 +108,23 @@ extension PublisherViewController: SubscriberProtocol {
 }
 ```
 
+If subscribing to multiple publishers, it is common to create separate private functions for the switches.
+```swift
+extension PublisherViewController: SubscriberProtocol {
+    public func publication(from publisher: AnyPublisher) {
+        if let productPublisher = publisher as? Publisher<[Product]> {
+            handleProductPublication(productPublisher)
+        } else if let couponPublisher = publisher as? Publisher<[Coupon]> {
+            handleCouponPublication(couponPublisher)
+        } else if let locationPublisher = publisher as? Publisher<Location> {
+            handleLocationPublication(locationPublisher)
+        } else {
+            print("Recieved un-handled publication.")
+        }
+    }
+}
+```
+
 It is up to the app design to determine when and how often to update the data, or how agressively to recover from error states. Both can be done through the `ManagerProtocol` with `refreshIfNeeded()`. This mechanism can prevent a view getting stuck in an error, but may not be needed if UX properly allows user to manually refresh:
 ```swift
 override func viewWillAppear(_ animated: Bool) {
@@ -134,18 +155,19 @@ public func refreshIfNeeded() {
 Seeking feedback to see if there are opportunities to improve any of the three versions of the Publisher type (especially for clarity/readability and ease-of-use), before picking the final architecture. The plan is then to make a single pod/package/framework from the selected version and do a tech study, using it in one or more projects.
 
 ### Possible changes/improvements
-- Rename `.unknown` state: `.initialized`.
-- Merge `Manager` and `Publisher` for flatter architecture.
+- Rename `.unknown` state: `.initialized`?
+- Merge `Manager` and `Publisher` for flatter architecture?
 - Include mechanism for paged data.
 - Present system alert for errors in example app.
-- Caching.
-- Reduce boilerplate in explicit publisher usage
-- Work around one-to-many restriction of generic publisher
-- Better fix for swift protocol bug in explicit publisher
-- Always allow access to "previousData" (in `.error` and `.loaded` states, not just `.loading`)
+- Caching? Or keep separate.
+- Reduce boilerplate in ExplicitPublisher usage
+- Work around one-to-many restriction of GenericPublisher
+- Better fix for swift protocol bug in ExplicitPublisher
+- Always allow access to "previousData" (in `.error` and `.loaded` states, not just `.loading`)?
 - Implement hash for GenericSubscribers to avoid errors conforming to hashable (remove hashable requirement).
-- A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, React, etc.
-- Add tests
+- A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, Multicast Delegate, React, etc.
+- Add tests: multiple subscribers, duplicate subscribers, publish data, etc.
+- Better name for framework, pub/sub types.
+- Allow typesafe publications on background queues or main queue.
 
-A version of this architecture shipped in the Grove app, which includes examples of handling paged data and cached data, but I don't feel any are quite ready for generic usage/application yet.
-
+A version of this architecture shipped in the Grove app, which includes examples of handling paged data and cached data, but I don't feel either are quite ready for generic usage/application yet.

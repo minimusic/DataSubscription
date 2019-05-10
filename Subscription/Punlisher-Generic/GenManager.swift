@@ -27,6 +27,7 @@ public final class GenManager: NSObject {
 extension GenManager: GenManagerProtocol {
     public func start(with container: DataContainer) {
         // Not subscribing to anything
+        publisher.staleDuration = 60
         getData()
     }
 
@@ -35,6 +36,10 @@ extension GenManager: GenManagerProtocol {
         case .error:
             // refresh if in error state
             getData()
+        case .loaded:
+            if publisher.isStale {
+                getData()
+            }
         default:
             break
         }

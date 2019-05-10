@@ -19,11 +19,45 @@ public class ExplicitPublisher<Type, Protocol> {
         // This could persist if the publisher is waiting for another event (like login)
         // but should never return to this state until reset/logout.
     }
+    private var loadedTimestamp: Date?
+    /// nil duration means data never becomes stale
+    public var staleDuration: TimeInterval?
     public var state: PublisherState = .unknown {
         didSet {
+            switch state {
+            case .error:
+                break
+            case .loading:
+                break
+            case .loaded:
+                loadedTimestamp = Date()
+            case .unknown:
+                break
+            }
+            // Always publish the new state to all subscribers.
             publish()
         }
     }
+    
+    /// Indicates if data should be re-fetched
+    public var isStale: Bool {
+        get {
+            // Only .loaded data can be stale
+            switch state {
+            case .loaded:
+                if let duration = staleDuration,
+                    let staleDate = loadedTimestamp?.addingTimeInterval(duration) {
+                    if staleDate < Date() {
+                        return true
+                    }
+                }
+            default:
+                break
+            }
+            return false
+        }
+    }
+
     // FIXME: refactor explicit subscribers into a Set
     private var subscribers: [Subscriber] = [Subscriber]()
 

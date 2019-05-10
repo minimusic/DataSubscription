@@ -78,6 +78,12 @@ class ExplicitPubViewController: UIViewController {
         navigationItem.rightBarButtonItem = refreshButton
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Try to clear any errors when user visits screen
+        container.expManager.refreshIfNeeded()
+    }
+
     @objc func refreshData() {
         container.expManager.getData()
     }

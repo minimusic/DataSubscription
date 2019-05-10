@@ -54,9 +54,42 @@ open class GenericPublisher<Type>: NSObject {
     }
 
     private var subscribers = Set<AnyGenSubscriber<Type>>()
+    private var loadedTimestamp: Date?
+    /// nil duration means data never becomes stale
+    public var staleDuration: TimeInterval?
     public var state: PublisherState = .unknown {
         didSet {
+            switch state {
+            case .error:
+                break
+            case .loading:
+                break
+            case .loaded:
+                loadedTimestamp = Date()
+            case .unknown:
+                break
+            }
+            // Always publish the new state to all subscribers.
             publish()
+        }
+    }
+
+    /// Indicates if data should be re-fetched
+    public var isStale: Bool {
+        get {
+            // Only .loaded data can be stale
+            switch state {
+            case .loaded:
+                if let duration = staleDuration,
+                    let staleDate = loadedTimestamp?.addingTimeInterval(duration) {
+                    if staleDate < Date() {
+                        return true
+                    }
+                }
+            default:
+                break
+            }
+            return false
         }
     }
 
