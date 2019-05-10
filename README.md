@@ -136,7 +136,6 @@ Seeking feedback to see if there are opportunities to improve any of the three v
 ### Possible changes/improvements
 - Rename `.unknown` state: `.initialized`.
 - Merge `Manager` and `Publisher` for flatter architecture.
-- Flatten type-erasure for simpler concrete subscriber type
 - Include mechanism for paged data.
 - Present system alert for errors in example app.
 - Caching.
@@ -144,7 +143,7 @@ Seeking feedback to see if there are opportunities to improve any of the three v
 - Work around one-to-many restriction of generic publisher
 - Better fix for swift protocol bug in explicit publisher
 - Always allow access to "previousData" (in `.error` and `.loaded` states, not just `.loading`)
-- Implement hash for subscribers to avoid errors conforming to hashable (remove hashable requirement).
+- Implement hash for GenericSubscribers to avoid errors conforming to hashable (remove hashable requirement).
 - A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, React, etc.
 - Add tests
 
