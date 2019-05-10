@@ -8,6 +8,8 @@
 
 import Foundation
 
+public typealias AnyHashable = AnyObject & Hashable
+
 public protocol GenericSubscriberProtocol: AnyHashable {
     associatedtype DataType
     func publication(from publisher: GenericPublisher<DataType>)

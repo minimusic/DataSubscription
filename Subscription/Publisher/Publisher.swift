@@ -8,94 +8,41 @@
 
 import Foundation
 
-public typealias AnyHashable = AnyObject & Hashable
-
 ///
 /// Any Publisher can publish to the same protocol
 ///
-public protocol SubscriberProtocol: AnyHashable {
+public protocol SubscriberProtocol: AnyObject {
     func publication(from publisher: AnyPublisher)
 }
 
-// FIXME: replace type-erasure with flatter concrete type?
-public final class AnySubscriber: SubscriberProtocol {
-    private let box: _AnySubscriberBase
+///
+/// Subscribers must be wrapped in AnySubscriber concrete type
+///
+public class AnySubscriber : SubscriberProtocol, Hashable {
+
+    private var base: SubscriberProtocol
+
+    init(_ base: SubscriberProtocol) {
+        self.base = base
+    }
 
     public func hash(into hasher: inout Hasher) {
-        box.hash(into: &hasher)
+        hasher.combine(ObjectIdentifier(base))
     }
 
     public static func == (lhs: AnySubscriber, rhs: AnySubscriber) -> Bool {
-        if let leftObject = lhs.object(), let rightObject = rhs.object() {
-            return ObjectIdentifier(leftObject) == ObjectIdentifier(rightObject)
-        }
-        return false
-    }
-
-    // Initializer takes our concrete implementer of SubscriberProtocol
-    public init<Concrete: SubscriberProtocol>(_ concrete: Concrete) {
-        box = _AnySubscriberBox(concrete)
+        let leftObject = lhs.base
+        let rightObject = rhs.base
+        return ObjectIdentifier(leftObject) == ObjectIdentifier(rightObject)
     }
 
     public func publication(from publisher: AnyPublisher) {
-        box.publication(from: publisher)
+        base.publication(from: publisher)
     }
 
     public func object() -> AnyObject? {
-        return box.object()
+        return base
     }
-}
-
-private class _AnySubscriberBase: SubscriberProtocol {
-    public func hash(into hasher: inout Hasher) {
-        fatalError("Must override")
-    }
-    static func == (lhs: _AnySubscriberBase, rhs: _AnySubscriberBase) -> Bool {
-        if let leftObject = lhs.object(), let rightObject = rhs.object() {
-            return ObjectIdentifier(leftObject) == ObjectIdentifier(rightObject)
-        }
-        return false
-    }
-
-    init() {
-        guard type(of: self) != _AnySubscriberBase.self else {
-            fatalError("_AnyNewSubscriberBase<dataType> instances can not be created, create a subclass instance instead")
-        }
-    }
-
-    func publication(from publisher: AnyPublisher) {
-        fatalError("Must override")
-    }
-
-    func object() -> AnyObject? {
-        fatalError("Must override")
-    }
-}
-
-// weak Box class
-// final subclass of our abstract base inherits the protocol conformance
-// Links Concrete.Model (associated type) to _AnyRowBase.Model (generic parameter)
-private final class _AnySubscriberBox<Concrete: SubscriberProtocol>: _AnySubscriberBase {
-    // variable used since we're calling mutating functions
-    weak var concrete: Concrete?
-
-    override public func hash(into hasher: inout Hasher) {
-        concrete.hash(into: &hasher)
-    }
-    init(_ concrete: Concrete) {
-        self.concrete = concrete
-    }
-
-    // Trampoline functions forward along to base
-    override func publication(from publisher: AnyPublisher) {
-        if let validSubscriber = concrete {
-            validSubscriber.publication(from: publisher)
-        }
-    }
-    override func object() -> AnyObject? {
-        return concrete
-    }
-
 }
 
 open class AnyPublisher: NSObject {
