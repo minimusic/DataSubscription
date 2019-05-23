@@ -18,8 +18,10 @@ class LoadingProvider {
         spinner.color = UIColor.black.withAlphaComponent(0.4)
         overlayView.addSubview(spinner)
         spinner.translatesAutoresizingMaskIntoConstraints = false
-        spinner.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor).isActive = true
-        spinner.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            spinner.centerXAnchor.constraint(equalTo: overlayView.centerXAnchor),
+            spinner.centerYAnchor.constraint(equalTo: overlayView.centerYAnchor),
+            ])
         spinner.startAnimating()
         return overlayView
     }

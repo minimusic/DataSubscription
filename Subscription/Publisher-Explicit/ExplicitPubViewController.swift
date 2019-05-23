@@ -18,7 +18,6 @@ class ExplicitPubViewController: UIViewController {
     /// Update UI when view state changes
     var state: ViewState = .loading {
         didSet {
-            tableView.backgroundView = nil
             switch state {
             case .error:
                 let errorView = ErrorView()
@@ -27,7 +26,7 @@ class ExplicitPubViewController: UIViewController {
             case .loading:
                 tableView.backgroundView = LoadingProvider.getView()
             case .loaded(_):
-                break
+                tableView.backgroundView = nil
             }
             tableView.reloadData()
         }
@@ -48,7 +47,8 @@ class ExplicitPubViewController: UIViewController {
     init(container: DataContainer) {
         self.container = container
         super.init(nibName: nil, bundle: nil)
-        // Because of the explicit protocol, we can't generalize subscripotion in the manager
+        // Because of the explicit protocol, we can't generalize subscription in the manager.
+        // Must subscribe directly to the publisher
         container.expManager.publisher.subscribe(self)
     }
 
@@ -102,7 +102,7 @@ extension ExplicitPubViewController: UITableViewDelegate {
 extension ExplicitPubViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch state {
-        case .error(_):
+        case .error:
             return 0
         case .loading:
             return 0
@@ -115,7 +115,7 @@ extension ExplicitPubViewController: UITableViewDataSource {
         cell.translatesAutoresizingMaskIntoConstraints = false
 
         switch state {
-        case .error(_):
+        case .error:
             break
         case .loading:
             break

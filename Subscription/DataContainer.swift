@@ -8,6 +8,7 @@
 
 import Foundation
 
+/// Simple, flat dependancy container
 public class DataContainer {
     public let manager: Manager
     public let genManager: GenManager
@@ -15,6 +16,7 @@ public class DataContainer {
 
     public init() {
         // All Services
+        // FakeService provides a static func request, so no dependancy needed
 
         // All Managers/Publishers
         manager = Manager()
@@ -55,11 +57,11 @@ public extension ManagerProtocol {
     func logout() {
         publisher.reset()
     }
-    /// Wrap AnySubscriber type erasure
+    /// Wrap AnySubscriber concrete type
     func subscribe<T: SubscriberProtocol>(_ subscriber: T) {
         publisher.subscribe(AnySubscriber(subscriber))
     }
-    /// Wrap AnySubscriber type erasure
+    /// Wrap AnySubscriber concrete type
     func unsubscribe<T: SubscriberProtocol>(_ subscriber: T) {
         publisher.unsubscribe(AnySubscriber(subscriber))
     }
@@ -86,11 +88,11 @@ public extension GenManagerProtocol {
     func logout() {
         publisher.reset()
     }
-    /// Wrap AnySubscriber type erasure
+    /// Wrap AnyGenSubscriber type erasure
     func subscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType {
         publisher.subscribe(AnyGenSubscriber(subscriber))
     }
-    /// Wrap AnySubscriber type erasure
+    /// Wrap AnyGenSubscriber type erasure
     func unsubscribe<T: GenericSubscriberProtocol>(_ subscriber: T) where T.DataType == PublishedType {
         publisher.unsubscribe(AnyGenSubscriber(subscriber))
     }

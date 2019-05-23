@@ -19,7 +19,6 @@ class PublisherViewController: UIViewController {
     /// Update UI when viewState changes
     var state: ViewState = .loading {
         didSet {
-            tableView.backgroundView = nil
             switch state {
             case .error:
                 let errorView = ErrorView()
@@ -27,8 +26,8 @@ class PublisherViewController: UIViewController {
                 tableView.backgroundView = errorView
             case .loading:
                 tableView.backgroundView = LoadingProvider.getView()
-            case .loaded(_):
-                break
+            case .loaded:
+                tableView.backgroundView = nil
             }
             tableView.reloadData()
         }
@@ -102,7 +101,7 @@ extension PublisherViewController: UITableViewDelegate {
 extension PublisherViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch state {
-        case .error(_):
+        case .error:
             return 0
         case .loading:
             return 0
@@ -115,7 +114,7 @@ extension PublisherViewController: UITableViewDataSource {
         cell.translatesAutoresizingMaskIntoConstraints = false
 
         switch state {
-        case .error(_):
+        case .error:
             break
         case .loading:
             break
@@ -156,8 +155,8 @@ extension PublisherViewController: SubscriberProtocol {
                 // .loading(let oldData) would include any previous data, if available
                 state = .loading
             case .unknown:
-                // not handled in this app, but you may want to clear local cached state
-                // or simply show a loading ViewState as needed.
+                // Not handled in this app, but you may want to clear local cached state.
+                // We have already initialized local viewstate with .loading
                 break
             }
         } else {

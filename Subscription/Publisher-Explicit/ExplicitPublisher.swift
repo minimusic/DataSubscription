@@ -22,7 +22,7 @@ public class ExplicitPublisher<Type, Protocol> {
     private var loadedTimestamp: Date?
     /// nil duration means data never becomes stale
     public var staleDuration: TimeInterval?
-    public var state: PublisherState = .unknown {
+    private(set) public var state: PublisherState = .unknown {
         didSet {
             switch state {
             case .error:
@@ -61,6 +61,23 @@ public class ExplicitPublisher<Type, Protocol> {
     // FIXME: refactor explicit subscribers into a Set
     private var subscribers: [Subscriber] = [Subscriber]()
 
+    /// Traceable setter for behavior associated with state changes
+    public func setState(_ newState: PublisherState) {
+        switch newState {
+        case .error:
+            break
+        case .loading:
+            break
+        case .loaded:
+            loadedTimestamp = Date()
+        case .unknown:
+            break
+        }
+        // Always publish the new state to all subscribers.
+        state = newState
+        publish()
+    }
+
     public func updateData(_ newData: Type) {
         state = .loaded(newData)
     }
@@ -70,20 +87,20 @@ public class ExplicitPublisher<Type, Protocol> {
         // Includes stale data if available.
         switch state {
         case .loaded(let oldData):
-            state = .loading(oldData)
+            setState(.loading(oldData))
         default:
-            state = .loading(nil)
+            setState(.loading(nil))
         }
     }
 
     public func setError(_ newError: Error) {
         // Add new error to stack
-        state = .error(newError)
+        setState(.error(newError))
     }
 
     /// Clear all data/state
     public func reset() {
-        state = .unknown
+        setState(.unknown)
     }
 
     public func publish() {

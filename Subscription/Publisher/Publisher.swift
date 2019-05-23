@@ -65,22 +65,8 @@ open class Publisher<Type>: AnyPublisher {
     private var loadedTimestamp: Date?
     /// nil duration means data never becomes stale
     public var staleDuration: TimeInterval?
-    public var state: PublisherState = .unknown {
-        didSet {
-            switch state {
-            case .error:
-                break
-            case .loading:
-                break
-            case .loaded:
-                loadedTimestamp = Date()
-            case .unknown:
-                break
-            }
-            // Always publish the new state to all subscribers.
-            publish()
-        }
-    }
+    private(set) public var state: PublisherState = .unknown
+
     /// Indicates if data should be re-fetched
     public var isStale: Bool {
         get {
@@ -98,6 +84,23 @@ open class Publisher<Type>: AnyPublisher {
             }
             return false
         }
+    }
+
+    /// Traceable setter for behavior associated with state changes
+    public func setState(_ newState: PublisherState) {
+        switch newState {
+        case .error:
+            break
+        case .loading:
+            break
+        case .loaded:
+            loadedTimestamp = Date()
+        case .unknown:
+            break
+        }
+        // Always publish the new state to all subscribers.
+        state = newState
+        publish()
     }
 
     /// Publish state to all subscribers
@@ -137,26 +140,25 @@ open class Publisher<Type>: AnyPublisher {
 
     /// Called by service to enter .loaded state
     public func updateData(_ newData: Type) {
-        state = .loaded(newData)
+        setState(.loaded(newData))
     }
 
     /// Clear all data/state, enter .unknown state
     public func reset() {
-        state = .unknown
+        setState(.unknown)
     }
 
     /// Called by service to enter .loading state
     public func startLoading() {
         switch state {
         case .loaded(let staleData):
-            state = .loading(staleData)
+            setState(.loading(staleData))
         default:
-            state = .loading(nil)
+            setState(.loading(nil))
         }
     }
 
     /// Called by service to enter .error state
     public func setError(_ error: Error) {
-        state = .error(error)
-    }
+        setState(.error(error))    }
 }

@@ -27,7 +27,8 @@ public final class Manager: NSObject {
 
 extension Manager: ManagerProtocol {
     public func start(with container: DataContainer) {
-        // Subscribe to other publishers here, if needed
+        // Subscribe to other publishers here, if needed.
+        // For testing, data becomes stale in 60 seconds.
         publisher.staleDuration = 60
         getData()
     }
