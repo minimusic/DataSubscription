@@ -37,7 +37,7 @@ public final class ExplicitManager: NSObject {
 }
 
 extension ExplicitManager: ExpManagerProtocol {
-    public func start(with container: DataContainer) {
+    public func start(with container: ServiceContainer) {
         // Not subscribing to anything
         publisher.staleDuration = 60
         getData()

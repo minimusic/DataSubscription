@@ -25,7 +25,7 @@ public final class GenManager: NSObject {
 }
 
 extension GenManager: GenManagerProtocol {
-    public func start(with container: DataContainer) {
+    public func start(with container: ServiceContainer) {
         // Not subscribing to anything
         publisher.staleDuration = 60
         getData()

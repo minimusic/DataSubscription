@@ -9,7 +9,7 @@
 import UIKit
 
 class ViewController: UIViewController {
-    private let container: DataContainer
+    private let container: ServiceContainer
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.estimatedRowHeight = 100
@@ -19,7 +19,7 @@ class ViewController: UIViewController {
         return tableView
     }()
 
-    init(container: DataContainer) {
+    init(container: ServiceContainer) {
         self.container = container
         super.init(nibName: nil, bundle: nil)
     }
@@ -64,7 +64,7 @@ extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath.row {
         case 0:
-            let pubVC = PublisherViewController(container: container)
+            let pubVC = PublisherViewController(manager: container.manager)
             navigationController?.pushViewController(pubVC, animated: true)
         case 1:
             let expPubVC = ExplicitPubViewController(container: container)

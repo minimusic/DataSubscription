@@ -17,21 +17,7 @@ class GenericPubViewController: UIViewController {
     }
     
     /// Update UI when view state changes
-    var state: ViewState = .loading {
-        didSet {
-            switch state {
-            case .error:
-                let errorView = ErrorView()
-                errorView.delegate = self
-                tableView.backgroundView = errorView
-            case .loading:
-                tableView.backgroundView = LoadingProvider.getView()
-            case .loaded(_):
-                tableView.backgroundView = nil
-            }
-            tableView.reloadData()
-        }
-    }
+    private var state: ViewState = .loading
 
     private let tableView: UITableView = {
         let tableView = UITableView()
@@ -41,11 +27,11 @@ class GenericPubViewController: UIViewController {
         tableView.backgroundColor = .white
         return tableView
     }()
-    private let container: DataContainer
+    private let container: ServiceContainer
 
     // MARK: - Init
 
-    init(container: DataContainer) {
+    init(container: ServiceContainer) {
         self.container = container
         super.init(nibName: nil, bundle: nil)
         container.genManager.subscribe(self)
@@ -81,6 +67,21 @@ class GenericPubViewController: UIViewController {
         super.viewWillAppear(animated)
         // Try to clear any errors when user visits screen
         container.genManager.refreshIfNeeded()
+    }
+
+    func setViewState(_ newState: ViewState) {
+        state = newState
+        switch state {
+        case .error:
+            let errorView = ErrorView()
+            errorView.delegate = self
+            tableView.backgroundView = errorView
+        case .loading:
+            tableView.backgroundView = LoadingProvider.getView()
+        case .loaded:
+            tableView.backgroundView = nil
+        }
+        tableView.reloadData()
     }
 
     @objc func refreshData() {
@@ -148,12 +149,12 @@ extension GenericPubViewController: GenericSubscriberProtocol {
     public func publication(from publisher: GenericPublisher<[DataModel]>) {
         switch publisher.state {
         case .loaded(let newData):
-            state = .loaded(newData)
+            setViewState(.loaded(newData))
         case .error(let theError):
-            state = .error(theError)
+            setViewState(.error(theError))
         case .loading:
             // .loading(let oldData) would include any previous data, if available
-            state = .loading
+            setViewState(.loading)
         case .unknown:
             break
         }

@@ -9,7 +9,7 @@
 import Foundation
 
 /// Simple, flat dependancy container
-public class DataContainer {
+public class ServiceContainer {
     public let manager: Manager
     public let genManager: GenManager
     public let expManager: ExplicitManager
@@ -40,7 +40,7 @@ public protocol ManagerProtocol {
     associatedtype PublishedType
     var publisher: Publisher<PublishedType> { get }
     /// Give managers a chance to subscribe to other services
-    func start(with container: DataContainer)
+    func start(with container: ServiceContainer)
     /// subscriber is ready to consume: clear errors or stale data if possible
     func refreshIfNeeded()
     /// Clean up any cached data or state
@@ -52,7 +52,7 @@ public protocol ManagerProtocol {
 
 public extension ManagerProtocol {
     /// Give managers a chance to subscribe to other services
-    func start(with container: DataContainer) {}
+    func start(with container: ServiceContainer) {}
     /// Clean up any cached data or state
     func logout() {
         publisher.reset()
@@ -71,7 +71,7 @@ public protocol GenManagerProtocol {
     associatedtype PublishedType
     var publisher: GenericPublisher<PublishedType> { get }
     /// Give managers a chance to subscribe to other services
-    func start(with container: DataContainer)
+    func start(with container: ServiceContainer)
     /// subscriber is ready to consume: clear errors or stale data if possible
     func refreshIfNeeded()
     /// Clean up any cached data or state
@@ -83,7 +83,7 @@ public protocol GenManagerProtocol {
 
 public extension GenManagerProtocol {
     /// Give managers a chance to subscribe to other services
-    func start(with container: DataContainer) {}
+    func start(with container: ServiceContainer) {}
     /// Clean up any cached data or state
     func logout() {
         publisher.reset()
@@ -100,7 +100,7 @@ public extension GenManagerProtocol {
 
 public protocol ExpManagerProtocol {
     /// Give managers a chance to subscribe to other services
-    func start(with container: DataContainer)
+    func start(with container: ServiceContainer)
     /// subscriber is ready to consume: clear errors or stale data if possible
     func refreshIfNeeded()
     /// Clean up any cached data or state
@@ -109,5 +109,5 @@ public protocol ExpManagerProtocol {
 
 public extension ExpManagerProtocol {
     /// Give managers a chance to subscribe to other services
-    func start(with container: DataContainer) {}
+    func start(with container: ServiceContainer) {}
 }

@@ -18,26 +18,34 @@ public protocol SubscriberProtocol: AnyObject {
 ///
 /// Subscribers must be wrapped in AnySubscriber concrete type
 ///
-public class AnySubscriber : SubscriberProtocol, Hashable {
+public class AnySubscriber: SubscriberProtocol, Hashable {
 
-    private var base: SubscriberProtocol
+    private weak var base: SubscriberProtocol?
 
     init(_ base: SubscriberProtocol) {
         self.base = base
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(base))
+        if let validSubscriber = base {
+            hasher.combine(ObjectIdentifier(validSubscriber))
+        }
     }
 
     public static func == (lhs: AnySubscriber, rhs: AnySubscriber) -> Bool {
-        let leftObject = lhs.base
-        let rightObject = rhs.base
-        return ObjectIdentifier(leftObject) == ObjectIdentifier(rightObject)
+        if let leftObject = lhs.base,
+            let rightObject = rhs.base {
+            return ObjectIdentifier(leftObject) == ObjectIdentifier(rightObject)
+        } else {
+            return false
+        }
     }
 
     public func publication(from publisher: AnyPublisher) {
-        base.publication(from: publisher)
+        //        base.publication(from: publisher)
+        if let validSubscriber = base {
+            validSubscriber.publication(from: publisher)
+        }
     }
 
     public func object() -> AnyObject? {
@@ -45,7 +53,7 @@ public class AnySubscriber : SubscriberProtocol, Hashable {
     }
 }
 
-open class AnyPublisher: NSObject {
+open class AnyPublisher {
 
 }
 
@@ -66,36 +74,39 @@ open class Publisher<Type>: AnyPublisher {
     /// nil duration means data never becomes stale
     public var staleDuration: TimeInterval?
     private(set) public var state: PublisherState = .unknown
+    private(set) public var oldData: Type?
 
     /// Indicates if data should be re-fetched
     public var isStale: Bool {
-        get {
-            // Only .loaded data can be stale
-            switch state {
-            case .loaded:
-                if let duration = staleDuration,
-                    let staleDate = loadedTimestamp?.addingTimeInterval(duration) {
-                    if staleDate < Date() {
-                        return true
-                    }
+        // Only .loaded data can be stale
+        switch state {
+        case .loaded:
+            if let duration = staleDuration,
+                let staleDate = loadedTimestamp?.addingTimeInterval(duration) {
+                if staleDate < Date() {
+                    return true
                 }
-            default:
-                break
             }
-            return false
+        default:
+            break
         }
+        return false
     }
 
     /// Traceable setter for behavior associated with state changes
     public func setState(_ newState: PublisherState) {
+        // preserve old data
+        switch state {
+        case .loaded(let previousData):
+            oldData = previousData
+        default:
+            break
+        }
+        // timestamp new data
         switch newState {
-        case .error:
-            break
-        case .loading:
-            break
         case .loaded:
             loadedTimestamp = Date()
-        case .unknown:
+        default:
             break
         }
         // Always publish the new state to all subscribers.
@@ -105,14 +116,15 @@ open class Publisher<Type>: AnyPublisher {
 
     /// Publish state to all subscribers
     public func publish() {
+        var newSubscribers = Set<AnySubscriber>()
         for subscriber in subscribers {
             if subscriber.object() != nil {
                 // send message to valid subscriber
                 self.publish(to: subscriber)
-            } else {
-                subscribers.remove(subscriber)
+                newSubscribers.insert(subscriber)
             }
         }
+        subscribers = newSubscribers
     }
 
     /// Publish state to one subscriber
@@ -146,6 +158,7 @@ open class Publisher<Type>: AnyPublisher {
     /// Clear all data/state, enter .unknown state
     public func reset() {
         setState(.unknown)
+        oldData = nil
     }
 
     /// Called by service to enter .loading state

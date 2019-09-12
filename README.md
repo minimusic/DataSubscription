@@ -1,9 +1,9 @@
 # DataSubscription
 ## multi-delegate broadcasting
 
-Delegate protocols allow for tightly coupled communication (between parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but are inherently a one-to-one relationship. In most asynchronous, data-driven flows (requesting remote content) many-to-many communication is needed; this can be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
+Delegate protocols allow for tightly coupled communication (between parent/child controllers, controllers/UI, coordinators/controllers, service providers/consumers), but are inherently a one-to-one relationship. In most asynchronous, data-driven flows (requesting remote content) many-to-one communication is needed; this can be handled by a notification system, "listeners" or "observers"(e.g. KVOs), block/closure stores, or specialized caching services.
 
-This `Subscriber` solution is closer to delegate protocols, but where a puslisher can have many delegates and a subscriber can be the delegate of many puiblishers. An object registers itself as one of a set of "subscribers" to a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of any subscribed data. By using the delegate protocol mechanism it is consistant and familiar with existing iOS/Swift practices and has a strong, typed contract on both sides.
+This `Subscriber` solution is most similar to delegate protocols, but a Publisher can have many delegates and a Subscriber can be the delegate of many puiblishers. An object registers itself as one of a set of "subscribers" to a particular type of data, and then conforms to a single delegate protocol function which will publish the current state of any subscribed data. By using the delegate protocol mechanism it is consistant and familiar with existing iOS/Swift practices and has a strong, typed contract on both sides.
 
 The target use-case is to serve any data that needs to be fetched asynchronously, where the data state will drive the UI. The sample app simulates an endpoint that includes random loading delays and errors to fully demonstrate the flow.
 
@@ -26,7 +26,7 @@ There are currently three flavors of the Publisher/Subscriber code, each with so
 
 3 - `Publisher` differs from the "Generic" version with a weaker protocol contract. To support many-to-many broadcast, ALL publishers use the same type-less subscriber protocol, so there is no guarantee that the "correct" type is being consumed. Instead, the published data must be tested for type before being consumed. This has the advantages of using generics (easier implementation, less verbose code) but also allows for many-to-many architecture. This also slightly simplifies the type erasure, as only a concrete type is needed to represent the subscriber protocol, but it needn't be type-less.
 
-`Publisher` (number 3) is the current "favorite" balance of compromises, but that could change as each version (and the Swift language) evolves.
+`Publisher` (number 3) is the current "favorite" balance of compromises, but that could change the three versions (and the Swift language) evolve.
 
 ## STATE
 
@@ -41,7 +41,7 @@ This state should always be consumed by each subscriber with an exhaustive switc
 
 ## USAGE
 
-In the example project the `Publisher` instance is created and driven by a manager conforming to the `ManagerProtocol`. The manager sewrves as the public API for subscribing and requesting data refresh, and also responsible for calling endpoints/services and defining the type of data published. For now I am only going to describe how to use the final `Publisher` type (third in the list above). First we'll instantiate a `Publisher` in our manager object, and then we'll subscribe to it from the UI and handle a data publication.
+In the example project the `Publisher` instance is created and driven by a manager conforming to the `ManagerProtocol`. The manager serves as the public API for subscribing and requesting data refresh, and is also responsible for calling endpoints/services and defining the type of data published. For now I am only going to describe how to use the final `Publisher` type (third in the list above). First we'll instantiate a `Publisher` in our manager object, and then we'll subscribe to it from the UI and handle a data publication.
 
 ### Create a Publisher
 
@@ -65,6 +65,8 @@ DataEndpoint.getShipment() { (response) in
 }
 ```
 
+Here we call `.startLoading()` to enter the `.loading` state when starting the asynchronous request. When we get a resonse we move to either a `.loaded` state or `.error` state but calling `.updateData()` or `.setError()` on the Publisher. 
+
 To clear/reset the publisher, set it back to the `.unknown` state using `reset()`. This should only be done if the data is dependant on a login state or other external requirement, like in this example implementation of `logout()` in the  `ManagerProtocol`:
 ```swift
 public func logout() {
@@ -74,12 +76,12 @@ public func logout() {
 
 ### Subscribe to the Publisher
 
-You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe (e.g. don't subscribe before your `UITableView` has been created). In this example, dependancy injection is handled by a global `container` object:
+You should only subscribe when you are ready to handle the response as you will get an immediate publication of the current data state when you subscribe (e.g. don't subscribe before your `UITableView` has been created):
 ```swift
-container.manager.subscribe(self)
+manager.subscribe(self)
 ```
 
-If you are not using the `ManagerProtocol`, you will need to subscribe directly wrapping the subscriber with `AnySubscriber`:
+If you are not using the `ManagerProtocol`, you will need to subscribe directly, wrapping the subscriber with `AnySubscriber()`:
 ```swift
 publisher.subscribe(AnySubscriber(self))
 ```
@@ -130,7 +132,7 @@ It is up to the app design to determine when and how often to update the data, o
 override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
     // Try to clear any errors when user visits screen
-    container.manager.refreshIfNeeded()
+    manager.refreshIfNeeded()
 }
 ```
 
