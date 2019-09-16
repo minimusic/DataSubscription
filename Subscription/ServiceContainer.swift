@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SubPub
 
 /// Simple, flat dependancy container
 public class ServiceContainer {
@@ -33,37 +34,6 @@ public class ServiceContainer {
         manager.logout()
         genManager.logout()
         expManager.logout()
-    }
-}
-
-public protocol ManagerProtocol {
-    associatedtype PublishedType
-    var publisher: Publisher<PublishedType> { get }
-    /// Give managers a chance to subscribe to other services
-    func start(with container: ServiceContainer)
-    /// subscriber is ready to consume: clear errors or stale data if possible
-    func refreshIfNeeded()
-    /// Clean up any cached data or state
-    func logout()
-
-    func subscribe<T: SubscriberProtocol>(_ subscriber: T)
-    func unsubscribe<T: SubscriberProtocol>(_ subscriber: T)
-}
-
-public extension ManagerProtocol {
-    /// Give managers a chance to subscribe to other services
-    func start(with container: ServiceContainer) {}
-    /// Clean up any cached data or state
-    func logout() {
-        publisher.reset()
-    }
-    /// Wrap AnySubscriber concrete type
-    func subscribe<T: SubscriberProtocol>(_ subscriber: T) {
-        publisher.subscribe(AnySubscriber(subscriber))
-    }
-    /// Wrap AnySubscriber concrete type
-    func unsubscribe<T: SubscriberProtocol>(_ subscriber: T) {
-        publisher.unsubscribe(AnySubscriber(subscriber))
     }
 }
 

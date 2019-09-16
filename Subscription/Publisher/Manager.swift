@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SubPub
 
 public final class Manager: NSObject {
     public let publisher = Publisher<[DataModel]>()

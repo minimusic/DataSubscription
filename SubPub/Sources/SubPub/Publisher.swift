@@ -54,7 +54,7 @@ public class AnySubscriber: SubscriberProtocol, Hashable {
 }
 
 open class AnyPublisher {
-
+    public init() {}
 }
 
 open class Publisher<Type>: AnyPublisher {
@@ -134,20 +134,22 @@ open class Publisher<Type>: AnyPublisher {
 
     /// Add subscriber to set, publish if new subscriber
     /// Caller must be wrapped: AnySubscriber(self)
-    public func subscribe(_ object: AnySubscriber) {
-        if subscribers.contains(object) {
+    public func subscribe(_ object: SubscriberProtocol) {
+        let newSubscriber = AnySubscriber(object)
+        if subscribers.contains(newSubscriber) {
             // already subscribed
             // re-publish to duplicate subscriber?
         } else {
-            subscribers.insert(object)
-            self.publish(to: object)
+            subscribers.insert(newSubscriber)
+            self.publish(to: newSubscriber)
         }
     }
 
     /// Remove subscriber from list of subscribers
     /// Caller must be wrapped: AnySubscriber(self)
-    public func unsubscribe(_ object: AnySubscriber) {
-        subscribers.remove(object)
+    public func unsubscribe(_ object: SubscriberProtocol) {
+        let oldSubscriber = AnySubscriber(object)
+        subscribers.remove(oldSubscriber)
     }
 
     /// Called by service to enter .loaded state

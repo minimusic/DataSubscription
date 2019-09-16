@@ -126,9 +126,6 @@ extension ExplicitPubViewController: UITableViewDataSource {
             cell.backgroundColor = cellState.color
         }
 
-        NSLayoutConstraint.activate([
-            cell.contentView.heightAnchor.constraint(equalToConstant: 60),
-            ])
         return cell
     }
 }

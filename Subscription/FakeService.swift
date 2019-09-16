@@ -17,7 +17,7 @@ public struct DataModel {
 }
 
 class DataEndpoint {
-    static func getShipment(completion: @escaping (Result<[DataModel]>) -> Void) {
+    static func getShipment(completion: @escaping (Result<[DataModel],Error>) -> Void) {
         // random delay
         let randomDelay = Int.random(in: 1...5)
         print("Delay = \(randomDelay)")
@@ -26,7 +26,7 @@ class DataEndpoint {
             let isError: Bool = Int.random(in: 1...5) == 1
             // random response
             if isError {
-                completion(.failure(.serviceError))
+                completion(.failure(FakeError.serviceError))
             } else {
                 let arrayCount = Int.random(in: 10...25)
                 var resultArray: [DataModel] = []
@@ -47,12 +47,7 @@ class DataEndpoint {
     }
 }
 
-public enum Result<Value> {
-    case success(Value)
-    case failure(Error)
-}
-
-public enum Error: Swift.Error {
+public enum FakeError: Swift.Error {
     case serviceError
 }
 

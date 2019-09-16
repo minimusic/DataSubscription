@@ -98,9 +98,7 @@ extension ViewController: UITableViewDataSource {
             cell.textLabel?.text = "Error"
         }
         cell.accessoryType = .disclosureIndicator
-        NSLayoutConstraint.activate([
-            cell.contentView.heightAnchor.constraint(equalToConstant: 100),
-            ])
+
         return cell
     }
 }

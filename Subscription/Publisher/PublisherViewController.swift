@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SubPub
 
 class PublisherViewController: UIViewController {
     /// View state can match data state, but doesn't need to
@@ -34,7 +35,7 @@ class PublisherViewController: UIViewController {
     init(manager: Manager) {
         self.manager = manager
         super.init(nibName: nil, bundle: nil)
-        manager.subscribe(self)
+        manager.publisher.subscribe(self)
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -125,9 +126,6 @@ extension PublisherViewController: UITableViewDataSource {
             cell.backgroundColor = cellState.color
         }
 
-        NSLayoutConstraint.activate([
-            cell.contentView.heightAnchor.constraint(equalToConstant: 60),
-            ])
         return cell
     }
 }
