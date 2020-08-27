@@ -35,9 +35,9 @@ A publisher can be in one of four states:
 - `.unknown` - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
 - `.loading` - A request has been made for new data, but the new data has not yet been loaded. The Loading state may include previous but possibly stale data.
 - `.loaded` - The publisher has successfully loaded new data (OR could be used for available cached data). Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but it is ready to be presented).
-- `.error` - An attempt to load the data could not be completed. Error data is included in the state.
+- `.error` - An attempt to load the data could not be completed. Error details are included in the state.
 
-This state should always be consumed by each subscriber with an exhaustive switch statement to ensure that all cases are being considered/handled. Ideally, each published data state is mapped to a matching ViewState.
+This state should always be consumed by each subscriber with an exhaustive switch statement to ensure that all cases are being considered and handled. Ideally, each published data state is mapped to a matching ViewState.
 
 ## USAGE
 
@@ -65,7 +65,7 @@ DataEndpoint.getShipment() { (response) in
 }
 ```
 
-Here we call `.startLoading()` to enter the `.loading` state when starting the asynchronous request. When we get a resonse we move to either a `.loaded` state or `.error` state but calling `.updateData()` or `.setError()` on the Publisher. 
+Here we call `.startLoading()` to enter the `.loading` state when starting the asynchronous request. When we get a response we move to either a `.loaded` state or `.error` state by calling `.updateData()` or `.setError()` on the Publisher. 
 
 To clear/reset the publisher, set it back to the `.unknown` state using `reset()`. This should only be done if the data is dependant on a login state or other external requirement, like in this example implementation of `logout()` in the  `ManagerProtocol`:
 ```swift
@@ -165,9 +165,9 @@ Seeking feedback to see if there are opportunities to improve any of the three v
 - Reduce boilerplate in ExplicitPublisher usage
 - Work around one-to-many restriction of GenericPublisher
 - Better fix for swift protocol bug in ExplicitPublisher
-- Always allow access to "previousData" (make data public, not just associuated with`.loading`)?
+- Always allow access to "previousData" (make data public, not just associated with`.loading`)?
 - Implement hash for GenericSubscribers to avoid errors conforming to hashable (remove hashable requirement).
-- A full comparison with other broadcast techniques: KVO, Notif. Center, Blocks, Multicast Delegate, React, etc.
+- A full comparison with other broadcast techniques: Combine, KVO, Notif. Center, Blocks, Multicast Delegate, React, etc.
 - Add tests: multiple subscribers, duplicate subscribers, publish data, etc.
 - Better name for framework, pub/sub types.
 - Allow typesafe publications on background queues or main queue.
