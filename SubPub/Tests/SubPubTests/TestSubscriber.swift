@@ -8,7 +8,7 @@
 import Foundation
 import SubPub
 
-class TestSubscriber: NSObject {
+class TestSubscriber {
     public enum TestState {
         case error(Error)
         case loading
@@ -21,12 +21,7 @@ class TestSubscriber: NSObject {
 
     init(manager: TestManager) {
         self.manager = manager
-        super.init()
         manager.publisher.subscribe(self)
-    }
-
-    @objc func refreshData() {
-        manager.getData()
     }
 }
 

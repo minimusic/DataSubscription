@@ -16,7 +16,7 @@ public enum TestError: Swift.Error, Equatable {
     case serviceError
 }
 
-public final class TestManager: NSObject {
+public final class TestManager {
     public let publisher = Publisher<[TestData]>()
 
     // Request data and update publisher state

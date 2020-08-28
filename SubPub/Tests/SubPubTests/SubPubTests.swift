@@ -22,9 +22,9 @@ final class SubPubTests: XCTestCase {
         
         switch subscriber.state {
         case .loaded(let subData):
-            XCTAssertEqual(subData, publishedData)
+            XCTAssertEqual(subData, publishedData, "TestSubscriber data does not match publiushed data.")
         default:
-            XCTFail()
+            XCTFail("TestSubsciber state was not updated to match published state.")
         }
     }
     
@@ -42,25 +42,25 @@ final class SubPubTests: XCTestCase {
         switch subscriberA.state {
         case .error(let subError):
             if let subTestError = subError as? TestError {
-                XCTAssertEqual(subTestError, publishedError)
+                XCTAssertEqual(subTestError, publishedError, "TestSubscriber error does not match published error.")
             }
             else {
-                XCTFail()
+                XCTFail("TestSubscriber error type does not match published error type.")
             }
         default:
-            XCTFail()
+            XCTFail("TestSubsciber state was not updated to match published state.")
         }
         
         switch subscriberB.state {
         case .error(let subError):
             if let subTestError = subError as? TestError {
-                XCTAssertEqual(subTestError, publishedError)
+                XCTAssertEqual(subTestError, publishedError, "TestSubscriber error does not match published error.")
             }
             else {
-                XCTFail()
+                XCTFail("TestSubscriber error type does not match published error type.")
             }
         default:
-            XCTFail()
+            XCTFail("TestSubsciber state was not updated to match published state.")
         }
         // Better to store bools and have single logical assert at the end?
     }
@@ -85,9 +85,9 @@ final class SubPubTests: XCTestCase {
         
         switch subscriber.state {
         case .loaded(let subData):
-            XCTAssertEqual(subData, publishedData)
+            XCTAssertEqual(subData, publishedData, "TestSubscriber data may have mutated after unsubscribing.")
         default:
-            XCTFail()
+            XCTFail("TestSubscriber state may have mutated after unsubscribing.")
         }
     }
     
@@ -114,13 +114,13 @@ final class SubPubTests: XCTestCase {
         switch subscriberB.state {
         case .error(let subError):
             if let subTestError = subError as? TestError {
-                XCTAssertEqual(subTestError, publishedError)
+                XCTAssertEqual(subTestError, publishedError, "TestSubscriber error does not match published error after a deallocation.")
             }
             else {
-                XCTFail()
+                XCTFail("TestSubscriber error type does not match published error type after a deallocation.")
             }
         default:
-            XCTFail()
+            XCTFail("TestSubsciber state does not match published state after a deallocation.")
         }
     }
 }
