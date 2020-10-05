@@ -12,7 +12,7 @@ A publisher can be in one of four states:
 
 - `.unknown` - The Publisher has been created but has no knowledge of the data yet. It has not yet made an attempt to load the data.
 - `.loading` - A request has been made for new data, but the new data has not yet been loaded. The Loading state may include previous but possibly stale data.
-- `.loaded` - The publisher has successfully loaded new data (OR could be used for available cached data). Loaded will always include the data (If it is paged data, it could be an incomplete or "mixed" data state, but it is ready to be presented).
+- `.loaded` - The publisher has successfully loaded new data (OR non-stale cached data). Loaded will always include the data (If it is paged data, it may be an incomplete or "mixed" data state, but it is ready to be presented).
 - `.error` - An attempt to load the data could not be completed. Error data is included in the state.
 
 This state should always be consumed by each subscriber with an exhaustive switch statement to ensure that all cases are being considered/handled. Ideally, each published data state is mapped to a matching ViewState.

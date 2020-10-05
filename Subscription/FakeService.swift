@@ -18,13 +18,14 @@ public struct DataModel {
 
 class DataEndpoint {
     static func getShipment(completion: @escaping (Result<[DataModel],Error>) -> Void) {
-        // random delay
+        // Random delay
         let randomDelay = Int.random(in: 1...5)
         print("Delay = \(randomDelay)")
+        // Wait until we publish to move to main queue?
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(randomDelay)) {
             // 20% chance of error
             let isError: Bool = Int.random(in: 1...5) == 1
-            // random response
+            // Random response
             if isError {
                 completion(.failure(FakeError.serviceError))
             } else {
